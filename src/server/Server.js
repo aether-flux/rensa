@@ -7,24 +7,28 @@ export class Server {
     this.router = new Router();
   }
 
-  get (path, handler) {
-    this.router.add("GET", path, handler);
+  use (middleware) {
+    this.router.use(middleware);
   }
 
-  post (path, handler) {
-    this.router.add("POST", path, handler);
+  get (path, ...handlers) {
+    this.router.add("GET", path, ...handlers);
   }
 
-  put (path, handler) {
-    this.router.add("PUT", path, handler);
+  post (path, ...handlers) {
+    this.router.add("POST", path, ...handlers);
   }
 
-  patch (path, handler) {
-    this.router.add("PATCH", path, handler);
+  put (path, ...handlers) {
+    this.router.add("PUT", path, ...handlers);
   }
 
-  delete (path, handler) {
-    this.router.add("DELETE", path, handler);
+  patch (path, ...handlers) {
+    this.router.add("PATCH", path, ...handlers);
+  }
+
+  delete (path, ...handlers) {
+    this.router.add("DELETE", path, ...handlers);
   }
 
   listen (port, callback = () => {}) {
@@ -69,7 +73,6 @@ export class Server {
     });
 
     server.listen(port, () => {
-        console.log("Server js started.");
         callback();
     });
   }

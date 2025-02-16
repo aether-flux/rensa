@@ -1,33 +1,35 @@
 import { Server } from "./server/Server.js";
 
-const app = new Server();
+export class RevApp {
+  constructor () {
+    this.app = new Server();
+  }
 
-app.get("/test", (req, res) => {
-  console.log("Hello Ascent.js!!");
-  res.send("Hello Ascent!");
-})
+  use (middleware) {
+    this.app.use(middleware);
+  }
 
-app.post("/test", (req, res) => {
-  console.log("Username: ", req.body.username);
-  console.log("Password: ", req.body.pswd);
-})
+  get (path, ...handlers) {
+    this.app.get(path, ...handlers);
+  }
 
-app.put("/test", (req, res) => {
-  console.log("Username: ", req.body.username);
-  console.log("Password: ", req.body.pswd);
-})
+  post (path, ...handlers) {
+    this.app.post(path, ...handlers);
+  }
 
-app.patch("/test", (req, res) => {
-  console.log("Username: ", req.body.username);
-  console.log("Password: ", req.body.pswd);
-})
+  put (path, ...handlers) {
+    this.app.put(path, ...handlers);
+  }
 
-app.delete("/test", (req, res) => {
-  console.log("Username: ", req.body.username);
-  console.log("Password: ", req.body.pswd);
-})
+  patch (path, ...handlers) {
+    this.app.patch(path, ...handlers);
+  }
 
+  delete (path, ...handlers) {
+    this.app.delete(path, ...handlers);
+  }
 
-app.listen(3000, () => {
-  console.log("Server started on port 3000...");
-})
+  listen (port, callback) {
+    this.app.listen(port, callback);
+  }
+}

@@ -9,6 +9,10 @@ export class RevApp {
     this.app.use(middleware);
   }
 
+  useBuiltin (midd, ...opts) {
+    this.app.useBuiltin(midd, ...opts);
+  }
+
   get (path, ...handlers) {
     this.app.get(path, ...handlers);
   }

@@ -1,6 +1,12 @@
 import http from "http";
 import { Router } from "../routes/Routes.js";
 import { URLSearchParams } from "url";
+import { cors } from "../middlewares/cors.js";
+import { rateLimit } from "../middlewares/rateLimit.js";
+import { logger } from "../middlewares/logger.js";
+import { securityHeaders } from "../middlewares/security.js";
+import { cookieParser } from "../middlewares/cookies.js";
+import { session } from "../middlewares/session.js";
 
 export class Server {
   constructor () {
@@ -9,6 +15,35 @@ export class Server {
 
   use (middleware) {
     this.router.use(middleware);
+  }
+
+  useBuiltin (midd, ...opts) {
+    let middleware;
+    if (midd === "cors") {
+      middleware = cors(...opts);
+      this.use(middleware);
+      return;
+    } else if (midd === "rate limiter") {
+      middleware = rateLimit(...opts);
+      this.use(middleware);
+      return;
+    } else if (midd === "request logger") {
+      middleware = logger();
+      this.use(middleware);
+      return;
+    } else if (midd === "security") {
+      middleware = securityHeaders();
+      this.use(middleware);
+      return;
+    } else if (midd === "cookies") {
+      middleware = cookieParser();
+      this.use(middleware);
+      return;
+    } else if (midd === "sessions") {
+      middleware = session();
+      this.use(middleware);
+      return;
+    }
   }
 
   get (path, ...handlers) {

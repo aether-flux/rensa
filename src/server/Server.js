@@ -14,6 +14,7 @@ export class Server {
   }
 
   use (middleware) {
+    if (!this.server) this.createServer();
     this.router.use(middleware);
   }
 
@@ -66,7 +67,7 @@ export class Server {
     this.router.add("DELETE", path, ...handlers);
   }
 
-  listen (port, callback = () => {}) {
+  createServer () {
     const server = http.createServer((req, res) => {
       // Custom res.send() function
       res.send = (data) => {
@@ -88,7 +89,7 @@ export class Server {
         body += chunk.toString();
       });
 
-      req.on("end", () => {
+      req.on("end", async () => {
         if (body) {
           let contentType = req.headers["content-type"];
 
@@ -103,11 +104,18 @@ export class Server {
           req.body = {};
         }
 
-        this.router.handle(method, path, req, res);
+        await this.router.handle(method, path, req, res);
       })
     });
 
-    server.listen(port, () => {
+    this.server = server;
+
+  }
+
+  listen (port, callback = () => {}) {
+//     this.createServer();
+
+    this.server.listen(port, () => {
         callback();
     });
   }

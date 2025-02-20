@@ -7,7 +7,7 @@ export class Router {
     this.store = new RouteStore();
   }
 
-  add (method, path, ...handlers) {
+  async add (method, path, ...handlers) {
     this.store.insert(path);
 
     let middlewares = [];
@@ -28,25 +28,30 @@ export class Router {
     this.middlewares.push(middleware);
   }
 
-  handle (method, path, req, res) {
+  async handle (method, path, req, res) {
     // Handle middlewares
     let index = 0;
     const middlewares =  [...this.middlewares];
 
-    const next = () => {
+    const next = async () => {
       if (index < middlewares.length) {
         const middleware = middlewares[index];
         index++;
-        middleware(req, res, next);
+        try {
+          await middleware(req, res, next);
+        } catch (e) {
+          res.statusCode = 500;
+          res.end("Internal Server Error");
+        }
       } else {
-        this.handleRoute(method, path, req, res);
+        await this.handleRoute(method, path, req, res);
      }
     }
 
-    next();
+    await next();
   }
 
-  handleRoute (method, path, req, res) {
+  async handleRoute (method, path, req, res) {
     req.params = {};
 
     if (!this.routes[method]) {
@@ -76,20 +81,25 @@ export class Router {
     const {middlewares, handler} = routeData;
     let index = 0;
 
-    const next = () => {
+    const next = async () => {
       if (index < middlewares.length) {
         let midw = middlewares[index];
         index++;
-        midw(req, res, next);
+        try {
+          await midw(req, res, next);
+        } catch (e) {
+          res.statusCode = 500;
+          res.end("Internal Server Error");
+        }
       } else {
-        handler(req, res);
+        await handler(req, res);
       }
     };
 
     if (middlewares.length > 0) {
-      next();
+      await next();
     } else {
-      handler(req, res);
+      await handler(req, res);
     }
   }
 }

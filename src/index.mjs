@@ -38,17 +38,17 @@ export class RevApp {
 
   listen (port, callback) {
     this.createServer();
-    this.server = this.app.server;
-
-    this.server.on("upgrade", (request, socket, head) => {
-      if (this.sockets) {
-        this.sockets.handleUpgrade(request, socket, head, (ws) => {
-          this.sockets.emit("connection", ws, request);
-        });
-      } else {
-        socket.destroy();
-      }
-    });
+//     this.server = this.app.server;
+// 
+//     this.server.on("upgrade", (request, socket, head) => {
+//       if (this.sockets) {
+//         this.sockets.handleUpgrade(request, socket, head, (ws) => {
+//           this.sockets.emit("connection", ws, request);
+//         });
+//       } else {
+//         socket.destroy();
+//       }
+//     });
 
     this.app.listen(port, callback);
   }

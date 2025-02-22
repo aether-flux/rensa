@@ -113,7 +113,7 @@ export class Server {
   }
 
   listen (port, callback = () => {}) {
-//     this.createServer();
+    this.createServer();
 
     this.server.listen(port, () => {
         callback();

@@ -1,4 +1,7 @@
 import http from "http";
+import gpath from "path";
+import fs from 'fs';
+import mime from 'mime';
 import { Router } from "../routes/Routes.js";
 import { URLSearchParams } from "url";
 import { cors } from "../middlewares/cors.js";
@@ -47,6 +50,11 @@ export class Server {
     }
   }
 
+  viewEngine (engine, folder = 'views') {
+    this.renderEngine = engine;
+    this.renderFolder = gpath.resolve(folder);
+  }
+
   get (path, ...handlers) {
     this.router.add("GET", path, ...handlers);
   }
@@ -78,6 +86,63 @@ export class Server {
           res.end(data);
         }
       };
+
+      // Custom res.json() function
+      res.json = (obj) => {
+        if (typeof obj !== "object") return;
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify(obj));
+      }
+
+      // Custom res.redirect() function
+      res.redirect = (url, statusCode = 302) => {
+        res.writeHead(statusCode, {Location: url});
+        res.end();
+      }
+
+      // Custom res.status() function
+      res.status = function (code) {
+        this.statusCode = code;
+        return this;
+      }
+
+      // Custom res.sendFile() function
+      res.sendFile = (filePath) => {
+        const absPath = gpath.resolve(filePath);
+
+        if (!fs.existsSync(absPath)) {
+          res.writeHead(404, {'Content-Type': 'text/plain'});
+          res.end("File not found.");
+          return;
+        }
+
+        const contentType = mime.getType(absPath) || 'application/octet-stream';
+
+        res.writeHead(200, {'Content-Type': contentType});
+
+        const fileStream = fs.createReadStream(absPath);
+        fileStream.pipe(res);
+      }
+
+      // Custom res.render() function
+      res.render = async (view, data = {}) => {
+        if (!this.renderEngine) throw new Error("View Engine is not set. Use app.viewEngine(engine <, folder>)");
+
+        const filePath = gpath.join(this.renderFolder, `${view}.${this.renderEngine}`);
+
+        if (this.renderEngine === 'ejs') {
+          const {renderEjs} = await import('../utils/render/handleEjs.js');
+          renderEjs(filePath, data, (err, html) => {
+            if (err) {
+              res.writeHead(500, {"Content-Type": "text/plain"});
+              return res.end("Error rendering view.");
+            }
+
+            res.writeHead(200, {"Content-Type": "text/html"});
+            res.end(html);
+          })
+        }
+      }
 
       // Handling executing routes
       const method = req.method;

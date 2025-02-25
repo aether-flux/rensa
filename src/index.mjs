@@ -16,6 +16,10 @@ export class RevApp {
     this.app.useBuiltin(midd, ...opts);
   }
 
+  viewEngine (engine, folder = 'views') {
+    this.app.viewEngine(engine, folder);
+  }
+
   get (path, ...handlers) {
     this.app.get(path, ...handlers);
   }

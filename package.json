@@ -7,7 +7,7 @@
     "revv": "cli/revv.js"
   },
   "scripts": {
-    "dev": "node src/index.js"
+    "dev": "node src/index.mjs"
   },
   "keywords": [],
   "author": "",
@@ -17,8 +17,11 @@
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
     "figlet": "^1.8.0",
-    "http": "^0.0.1-security",
     "inquirer": "^12.4.2",
+    "mime": "^4.0.6",
     "ora": "^8.2.0"
+  },
+  "peerDependencies": {
+    "ejs": "^3.1.10"
   }
 }

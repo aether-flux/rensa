@@ -1,6 +1,6 @@
 import { Server } from "./server/Server.js";
 
-export class RevApp {
+export class Rensa {
   constructor () {
     this.app = new Server();
     this.createServer = this.app.createServer;

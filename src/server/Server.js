@@ -144,6 +144,19 @@ export class Server {
         }
       }
 
+      // Custom req.get function
+      req.get = function (headerName) {
+        return this.headers[headerName.toLowerCase()] || null;
+      }
+
+      // Custom req.protocol function
+      Object.defineProperty(req, "protocol", {
+        get() {
+            return this.headers["x-forwarded-proto"] || (this.connection.encrypted ? "https" : "http");
+        }
+      });
+
+
       // Handling executing routes
       const method = req.method;
       const path = req.url.split('?')[0];

@@ -22,7 +22,7 @@ async function init () {
       type: 'list',
       name: 'template',
       message: chalk.hex('#11CFBC')('Choose a template:'),
-      choices: ['Basic', 'Auth', 'Fullstack', 'Socket'],
+      choices: ['Basic', 'Standard'],
       default: 'Basic',
     }
   ]);
@@ -37,9 +37,10 @@ async function init () {
   console.log("\n");
 
   try {
-    createNewProject(answers.projectName);
+    createNewProject(answers.projectName, answers.template);
     spinner.succeed(chalk.green(`Project ${answers.projectName} created successfully!`));
   } catch (e) {
+    console.log("Error: ", e)
     spinner.fail(chalk.red("Failed to create project."));
   }
 }

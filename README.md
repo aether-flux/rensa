@@ -47,5 +47,8 @@ Know more about the templates in [this repository](https://github.com/aether-flu
 ## Documentation
 A complete documentation is available on the official [Rensa](https://rensa.vercel.app/) website.
 
+## Support
+Love using Rensa? If you'd like to support its development and help keep it going, consider [buying me a coffee](buymeacoffee.com/aetherflux)!
+
 ## License
 MIT

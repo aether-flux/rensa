@@ -1,6 +1,6 @@
 {
   "name": "rensa",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Rensa is a fast, lightweight Node.js backend framework with Trie-based routing, middleware support, and an intuitive API for building scalable web applications.",
   "main": "src/index.mjs",
   "bin": {
@@ -35,6 +35,14 @@
   ],
   "author": "Amartya Chowdhury (aether-flux)",
   "license": "MIT",
+  "homepage": "https://rensa.vercel.app/",
+  "bugs": {
+    "url": "https://github.com/aether-flux/rensa/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aether-flux/rensa"
+  },
   "type": "module",
   "dependencies": {
     "chalk": "^5.4.1",

@@ -31,7 +31,7 @@ export class Server {
       middleware = rateLimit(...opts);
       this.use(middleware);
       return;
-    } else if (midd === "request logger") {
+    } else if (midd === "logger") {
       middleware = logger();
       this.use(middleware);
       return;

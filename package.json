@@ -1,17 +1,40 @@
 {
-  "name": "revjs",
+  "name": "rensa",
   "version": "1.0.0",
-  "description": "",
+  "description": "Rensa is a fast, lightweight Node.js backend framework with Trie-based routing, middleware support, and an intuitive API for building scalable web applications.",
   "main": "src/index.mjs",
   "bin": {
-    "revv": "cli/revv.js"
+    "rensa": "cli/rensa.js"
   },
-  "scripts": {
-    "dev": "node src/index.mjs"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "rensa",
+    "backend",
+    "framework",
+    "node",
+    "nodejs",
+    "web framework",
+    "server",
+    "express alternative",
+    "fast backend",
+    "lightweight framework",
+    "middleware",
+    "http server",
+    "router",
+    "optimized routing",
+    "performance",
+    "scalable",
+    "minimal",
+    "efficient",
+    "modern backend",
+    "web server",
+    "REST API",
+    "api framework",
+    "server-side",
+    "javascript",
+    "node framework"
+  ],
+  "author": "Amartya Chowdhury (aether-flux)",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
     "chalk": "^5.4.1",
@@ -20,6 +43,10 @@
     "inquirer": "^12.4.2",
     "mime": "^4.0.6",
     "ora": "^8.2.0"
+  },
+  "funding": {
+    "type": "buymeacoffee",
+    "url": "https://buymeacoffee.com/aetherflux"
   },
   "peerDependencies": {
     "ejs": "^3.1.10"

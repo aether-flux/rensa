@@ -6,17 +6,17 @@ import ora from 'ora';
 import figlet from 'figlet';
 import { createNewProject } from './commands/newProject.js';
 
-console.log(chalk.hex('#FF7043')(figlet.textSync('Revv.js', {horizontalLayout: 'fitted'})));
+console.log(chalk.hex('#FF7043')(figlet.textSync('Rensa', {horizontalLayout: 'fitted'})));
 
 async function init () {
-  console.log(chalk.hex("#FFFFFF")("\n✨ Welcome to Revv.js! ✨\n\n"));
+  console.log(chalk.hex("#FFFFFF")("\n✨ Welcome to Rensa! ✨\n\n"));
 
   const answers = await inquirer.prompt([
     {
       type: 'input',
       name: 'projectName',
       message: chalk.hex('#11CFBC')("What's your project name?"),
-      default: 'revv-app',
+      default: 'rensa-app',
     },
     {
       type: 'list',

@@ -40,6 +40,10 @@ export class Rensa {
     this.app.delete(path, ...handlers);
   }
 
+  notFound (handler) {
+    this.app.notFound(handler);
+  }
+
   listen (port, callback) {
     this.createServer();
 //     this.server = this.app.server;

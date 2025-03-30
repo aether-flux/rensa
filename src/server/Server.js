@@ -75,6 +75,11 @@ export class Server {
     this.router.add("DELETE", path, ...handlers);
   }
 
+  notFound (handler) {
+    if (!this.server) this.createServer();
+    this.router.setNotFound(handler);
+  }
+
   createServer () {
     const server = http.createServer((req, res) => {
       // Custom res.send() function

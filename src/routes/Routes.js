@@ -5,6 +5,14 @@ export class Router {
     this.middlewares = [];
     this.routes = {};  // Storing callbacks
     this.store = new RouteStore();
+    this.notFoundHandler = (req, res) => {
+      res.statusCode = 404;
+      res.end("No matching route found.");
+    }
+  }
+
+  setNotFound (handler) {
+    this.notFoundHandler = handler;
   }
 
   async add (method, path, ...handlers) {
@@ -73,9 +81,7 @@ export class Router {
     }
 
     if (!routeData) {
-      res.statusCode = 404;
-      res.end("No matching route found.");
-      return;
+      return await this.notFoundHandler(req, res);
     }
 
     const {middlewares, handler} = routeData;

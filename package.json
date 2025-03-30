@@ -1,6 +1,6 @@
 {
   "name": "rensa",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Rensa is a fast, lightweight Node.js backend framework with Trie-based routing, middleware support, and an intuitive API for building scalable web applications.",
   "main": "src/index.mjs",
   "bin": {

@@ -1,3 +1,4 @@
+import { loadEnv } from "./middlewares/envars.js";
 import { Server } from "./server/Server.js";
 
 export class Rensa {
@@ -60,4 +61,8 @@ export class Rensa {
 
     this.app.listen(port, callback);
   }
+}
+
+export function env () {
+  loadEnv();
 }

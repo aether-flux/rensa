@@ -10,6 +10,7 @@ import { logger } from "../middlewares/logger.js";
 import { securityHeaders } from "../middlewares/security.js";
 import { cookieParser } from "../middlewares/cookies.js";
 import { session } from "../middlewares/session.js";
+import { envars } from "../middlewares/envars.js";
 
 export class Server {
   constructor () {
@@ -47,6 +48,9 @@ export class Server {
       middleware = session();
       this.use(middleware);
       return;
+    } else if (midd === "env") {
+      middleware = envars();
+      this.use(middleware);
     }
   }
 

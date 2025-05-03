@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { Request, Response } from '../types/httpTypes';
 
 export function loadEnv() {
   try {
@@ -17,7 +18,7 @@ export function loadEnv() {
 }
 
 export function envars () {
-  return (req, res, next) => {
+  return (req: Request, res: Response, next: () => void) => {
     loadEnv();
     next();
   }

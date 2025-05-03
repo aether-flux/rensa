@@ -1,9 +1,10 @@
+import { Request, Response } from "../types/httpTypes.js";
 import { unique_id } from "../utils/uid.js";
 
-export function session (timeout = 3600000) {
+export function session (timeout: number = 3600000) {
   const sessions = new Map();
 
-  return (req, res, next) => {
+  return (req: Request, res: Response, next: () => void) => {
     let sessionId = req.cookies?.sessionId;
 
     if (!sessionId || !sessions.has(sessionId)) {

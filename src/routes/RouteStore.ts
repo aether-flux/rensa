@@ -1,4 +1,9 @@
+import { RouteMap, RouteNode } from "../types/routeTypes";
+
 class Node {
+  children: { [key: string]: Node };
+  eor: boolean;
+
   constructor () {
     this.children = {};  // Store characters
     this.eor = false;  // Check if path or route ends (eor = end of route)
@@ -6,14 +11,17 @@ class Node {
 };
 
 export class RouteStore {
+  private root: RouteNode;
+  private routeMap: RouteMap;
+  
   constructor () {
     this.root = new Node();
     this.routeMap = {};
   }
 
-  insert (path) {
-    let node = this.root;
-    let parts = path.split('/').filter(Boolean);
+  insert (path: string): void {
+    let node: Node = this.root;
+    let parts: string[] = path.split('/').filter(Boolean);
 
     for (let part of parts) {
       // If its a dynamic segment (:id or :slug)
@@ -43,11 +51,11 @@ export class RouteStore {
     node.eor = true;
   }
 
-  search(path) {
-    let node = this.root;
-    let parts = path.split('/').filter(Boolean);
-    let params = {};
-    let url = '';
+  search(path: string): { params: { [key: string]: string }; url: string } | null {
+    let node: Node = this.root;
+    let parts: string[] = path.split('/').filter(Boolean);
+    let params: { [key: string]: string } = {};
+    let url: string = '';
 
     for (let i = 0; i < parts.length; i++) {
       let part = parts[i];

@@ -1,6 +1,12 @@
+import { Handler, Middleware, RouteData } from "../types/routeTypes.js";
 import { RouteStore } from "./RouteStore.js";
 
 export class Router {
+  private middlewares: Middleware[];
+  private routes: { [method: string]: { [path: string]: RouteData } };
+  private store: RouteStore;
+  private notFoundHandler: Handler;
+
   constructor () {
     this.middlewares = [];
     this.routes = {};  // Storing callbacks
@@ -11,32 +17,32 @@ export class Router {
     }
   }
 
-  setNotFound (handler) {
+  setNotFound (handler: Handler): void {
     this.notFoundHandler = handler;
   }
 
-  async add (method, path, ...handlers) {
+  async add (method: string, path: string, ...handlers: Function[]): Promise<void> {
     this.store.insert(path);
 
-    let middlewares = [];
-    let handler;
+    let middlewares: Middleware[] = [];
+    let handler: (req: any, res: any) => void;
 
     if (handlers.length > 1) {
-      middlewares = handlers.slice(0, -1);
-      handler = handlers[handlers.length - 1];
+      middlewares = handlers.slice(0, -1) as Middleware[];
+      handler = handlers[handlers.length - 1] as Handler;
     } else {
-      handler = handlers[0];
+      handler = handlers[0] as Handler;
     }
 
     if (!this.routes[method]) this.routes[method] = {};
     this.routes[method][path] = {middlewares, handler};
   }
 
-  use (middleware) {
+  use (middleware: Middleware): void {
     this.middlewares.push(middleware);
   }
 
-  async handle (method, path, req, res) {
+  async handle (method: string, path: string, req: any, res: any): Promise<void> {
     // Handle middlewares
     let index = 0;
     const middlewares =  [...this.middlewares];
@@ -59,7 +65,7 @@ export class Router {
     await next();
   }
 
-  async handleRoute (method, path, req, res) {
+  async handleRoute (method: string, path: string, req: any, res: any): Promise<void> {
     req.params = {};
 
     if (!this.routes[method]) {
@@ -74,7 +80,7 @@ export class Router {
       const result = this.store.search(path);
 
       if (result) {
-        const {params, url} = result;
+        const { params, url } = result;
         req.params = params;
         routeData = this.routes[method][url];
       }
@@ -84,7 +90,7 @@ export class Router {
       return await this.notFoundHandler(req, res);
     }
 
-    const {middlewares, handler} = routeData;
+    const { middlewares, handler } = routeData;
     let index = 0;
 
     const next = async () => {

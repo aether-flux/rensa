@@ -1,11 +1,13 @@
-export function cors (options = {}) {
+import { Request, Response } from "../types/httpTypes";
+
+export function cors (options: { [key: string]: string } = {}) {
   const {
     origin = "*",
     methods = "GET, POST, PUT, PATCH, DELETE, OPTIONS",
     headers = "Content-Type, Authorization"
   } = options;
 
-  return (req, res, next) => {
+  return (req: Request, res: Response, next: () => void) => {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Methods", methods);
     res.setHeader("Access-Control-Allow-Headers", headers);

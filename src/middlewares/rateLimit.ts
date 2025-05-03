@@ -1,7 +1,9 @@
-export function rateLimit (windowMs = 60000, maxRequests = 10) {
+import { Request, Response } from "../types/httpTypes";
+
+export function rateLimit (windowMs: number = 60000, maxRequests: number = 10) {
   const reqCounts = new Map();
 
-  return (req, res, next) => {
+  return (req: Request, res: Response, next: () => void) => {
     const ip = req.socket.remoteAddress;
     const now = Date.now();
 

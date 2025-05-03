@@ -1,7 +1,11 @@
 import { loadEnv } from "./middlewares/envars.js";
 import { Server } from "./server/Server.js";
+import { Handler, Middleware } from "./types/routeTypes.js";
 
 export class Rensa {
+  app: Server;
+  createServer: () => void;
+
   constructor () {
     this.app = new Server();
     this.createServer = this.app.createServer;
@@ -9,60 +13,48 @@ export class Rensa {
 //     this.server = this.app.server;
   }
 
-  use (middleware) {
+  use (middleware: Middleware) {
     this.app.use(middleware);
   }
 
-  useBuiltin (midd, ...opts) {
+  useBuiltin (midd: string, ...opts: any[]) {
     this.app.useBuiltin(midd, ...opts);
   }
 
-  viewEngine (engine, folder = 'views') {
+  viewEngine (engine: string, folder: string = 'views') {
     this.app.viewEngine(engine, folder);
   }
 
-  get (path, ...handlers) {
+  get (path: string, ...handlers: Handler[]) {
     this.app.get(path, ...handlers);
   }
 
-  post (path, ...handlers) {
+  post (path: string, ...handlers: Handler[]) {
     this.app.post(path, ...handlers);
   }
 
-  put (path, ...handlers) {
+  put (path: string, ...handlers: Handler[]) {
     this.app.put(path, ...handlers);
   }
 
-  patch (path, ...handlers) {
+  patch (path: string, ...handlers: Handler[]) {
     this.app.patch(path, ...handlers);
   }
 
-  delete (path, ...handlers) {
+  delete (path: string, ...handlers: Handler[]) {
     this.app.delete(path, ...handlers);
   }
 
-  notFound (handler) {
+  notFound (handler: Handler) {
     this.app.notFound(handler);
   }
 
-  listen (port, callback) {
+  listen (port: number, callback: () => void) {
     this.createServer();
-//     this.server = this.app.server;
-// 
-//     this.server.on("upgrade", (request, socket, head) => {
-//       if (this.sockets) {
-//         this.sockets.handleUpgrade(request, socket, head, (ws) => {
-//           this.sockets.emit("connection", ws, request);
-//         });
-//       } else {
-//         socket.destroy();
-//       }
-//     });
-
     this.app.listen(port, callback);
   }
 }
 
-export function env () {
+export function env (): void {
   loadEnv();
 }

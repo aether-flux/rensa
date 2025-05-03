@@ -1,5 +1,7 @@
+import { Request, Response } from "../types/httpTypes";
+
 export function securityHeaders () {
-  return (req, res, next) => {
+  return (req: Request, res: Response, next: () => void) => {
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("X-Frame-Options", "SAMEORIGIN");
     res.setHeader("X-XSS-Protection", "1; mode=block");

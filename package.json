@@ -2,7 +2,13 @@
   "name": "rensa",
   "version": "1.1.2",
   "description": "Rensa is a fast, lightweight Node.js backend framework with Trie-based routing, middleware support, and an intuitive API for building scalable web applications.",
-  "main": "src/index.mjs",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
   "bin": {
     "rensa": "cli/rensa.js"
   },
@@ -44,6 +50,9 @@
     "url": "https://github.com/aether-flux/rensa"
   },
   "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
@@ -58,5 +67,12 @@
   },
   "peerDependencies": {
     "ejs": "^3.1.10"
+  },
+  "devDependencies": {
+    "@types/ejs": "^3.1.5",
+    "@types/node": "^22.15.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
   }
 }

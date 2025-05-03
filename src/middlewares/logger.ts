@@ -1,5 +1,7 @@
+import { Request, Response } from "../types/httpTypes";
+
 export function logger () {
-  return (req, res, next) => {
+  return (req: Request, res: Response, next: () => void) => {
     const start = Date.now();
 
     res.on("finish", () => {

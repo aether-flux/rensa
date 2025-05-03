@@ -1,4 +1,4 @@
-import http from "http";
+import http, { IncomingMessage, ServerResponse } from "http";
 import gpath from "path";
 import fs from 'fs';
 import mime from 'mime';
@@ -11,81 +11,78 @@ import { securityHeaders } from "../middlewares/security.js";
 import { cookieParser } from "../middlewares/cookies.js";
 import { session } from "../middlewares/session.js";
 import { envars } from "../middlewares/envars.js";
+import { Handler, Middleware } from "../types/routeTypes.js";
+import { Request, Response } from "../types/httpTypes.js";
 
 export class Server {
+  private router: Router;
+  private server?: http.Server;
+  private renderEngine?: string;
+  private renderFolder?: string;
+
   constructor () {
     this.router = new Router();
   }
 
-  use (middleware) {
+  use (middleware: Middleware) {
     if (!this.server) this.createServer();
     this.router.use(middleware);
   }
 
-  useBuiltin (midd, ...opts) {
-    let middleware;
-    if (midd === "cors") {
-      middleware = cors(...opts);
-      this.use(middleware);
-      return;
-    } else if (midd === "rate limiter") {
-      middleware = rateLimit(...opts);
-      this.use(middleware);
-      return;
-    } else if (midd === "logger") {
-      middleware = logger();
-      this.use(middleware);
-      return;
-    } else if (midd === "security") {
-      middleware = securityHeaders();
-      this.use(middleware);
-      return;
-    } else if (midd === "cookies") {
-      middleware = cookieParser();
-      this.use(middleware);
-      return;
-    } else if (midd === "sessions") {
-      middleware = session();
-      this.use(middleware);
-      return;
-    } else if (midd === "env") {
-      middleware = envars();
+  useBuiltin (midd: string, ...opts: any[]) {
+    let middleware: Middleware;
+    const builtins: Record<string, (...args: any[]) => Middleware> = {
+      "cors": cors,
+      "rate limiter": rateLimit,
+      "logger": logger,
+      "security": securityHeaders,
+      "cookies": cookieParser,
+      "sessions": session,
+      "env": envars
+    };
+
+    if (midd in builtins) {
+      middleware = builtins[midd](...opts);
       this.use(middleware);
     }
   }
 
-  viewEngine (engine, folder = 'views') {
+  viewEngine (engine: string, folder: string = 'views') {
     this.renderEngine = engine;
     this.renderFolder = gpath.resolve(folder);
   }
 
-  get (path, ...handlers) {
+  get (path: string, ...handlers: Handler[]) {
     this.router.add("GET", path, ...handlers);
   }
 
-  post (path, ...handlers) {
+  post (path: string, ...handlers: Handler[]) {
     this.router.add("POST", path, ...handlers);
   }
 
-  put (path, ...handlers) {
+  put (path: string, ...handlers: Handler[]) {
     this.router.add("PUT", path, ...handlers);
   }
 
-  patch (path, ...handlers) {
+  patch (path: string, ...handlers: Handler[]) {
     this.router.add("PATCH", path, ...handlers);
   }
 
-  delete (path, ...handlers) {
+  delete (path: string, ...handlers: Handler[]) {
     this.router.add("DELETE", path, ...handlers);
   }
 
-  notFound (handler) {
+  notFound (handler: Handler) {
     if (!this.server) this.createServer();
     this.router.setNotFound(handler);
   }
 
   createServer () {
-    const server = http.createServer((req, res) => {
+    const server = http.createServer((greq: IncomingMessage, gres: ServerResponse) => {
+      // Asserting Custom Request/Response Types
+      let req = greq as Request;
+      let res = gres as Response;
+
       // Custom res.send() function
       res.send = (data) => {
         if (typeof data === 'object') {
@@ -137,12 +134,13 @@ export class Server {
       res.render = async (view, data = {}) => {
         if (!this.renderEngine) throw new Error("View Engine is not set. Use app.viewEngine(engine <, folder>)");
 
-        const filePath = gpath.join(this.renderFolder, `${view}.${this.renderEngine}`);
+        const filePath = gpath.join(this.renderFolder || "", `${view}.${this.renderEngine || "ejs"}`);
 
         if (this.renderEngine === 'ejs') {
           const {renderEjs} = await import('../utils/render/handleEjs.js');
           renderEjs(filePath, data, (err, html) => {
             if (err) {
+              console.error("EJS Rendering Error:", err);
               res.writeHead(500, {"Content-Type": "text/plain"});
               return res.end("Error rendering view.");
             }
@@ -154,7 +152,7 @@ export class Server {
       }
 
       // Custom req.get function
-      req.get = function (headerName) {
+      req.get = function (headerName: string): string | string[] | null {
         return this.headers[headerName.toLowerCase()] || null;
       }
 
@@ -167,8 +165,8 @@ export class Server {
 
 
       // Handling executing routes
-      const method = req.method;
-      const path = req.url.split('?')[0];
+      const method = req.method || "GET";
+      const path = req.url ? req.url.split('?')[0] : "/";
 
       // Handling req.body manually
       let body = "";
@@ -199,11 +197,13 @@ export class Server {
 
   }
 
-  listen (port, callback = () => {}) {
+  listen (port: number, callback: () => void = () => {}) {
     this.createServer();
 
-    this.server.listen(port, () => {
-        callback();
-    });
+    if (this.server) {
+      this.server.listen(port, callback);
+    } else {
+      console.error("Server is not initialized.");
+    }
   }
 }

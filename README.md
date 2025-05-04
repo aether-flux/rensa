@@ -2,6 +2,8 @@
 
 A minimal, high-performance backend framework built for speed and scalability.
 
+![version](https://img.shields.io/github/v/release/aether-flux/rensa)
+
 ## Features
 
 - Fast and lightweight
@@ -46,6 +48,10 @@ Know more about the templates in [this repository](https://github.com/aether-flu
 
 ## Documentation
 A complete documentation is available on the official [Rensa](https://rensa.vercel.app/) website.
+
+## Latest Release
+🎉 Rensa v2.0.0 is out now!
+[Check out the full release notes here!](https://github.com/aether-flux/rensa/releases/tag/v2.0.0)
 
 ## Support
 Love using Rensa? If you'd like to support its development and help keep it going, consider [buying me a coffee](https://buymeacoffee.com/aetherflux)!

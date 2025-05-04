@@ -1,11 +1,11 @@
-import { Handler, Middleware } from "../types/routeTypes.js";
+import { Handler, Layer } from "../types/routeTypes.js";
 export declare class Server {
     private router;
     private server?;
     private renderEngine?;
     private renderFolder?;
     constructor();
-    use(middleware: Middleware): void;
+    use(middleware: Layer): void;
     useBuiltin(midd: string, ...opts: any[]): void;
     viewEngine(engine: string, folder?: string): void;
     get(path: string, ...handlers: Handler[]): void;

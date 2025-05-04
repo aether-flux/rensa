@@ -1,6 +1,9 @@
 import { loadEnv } from "./middlewares/envars.js";
 import { Server } from "./server/Server.js";
-import { Handler, Middleware } from "./types/routeTypes.js";
+import { Handler, Layer } from "./types/routeTypes.js";
+
+export type { Request, Response } from "./types/httpTypes.js";
+export type { Handler, Layer };
 
 export class Rensa {
   app: Server;
@@ -13,7 +16,7 @@ export class Rensa {
 //     this.server = this.app.server;
   }
 
-  use (middleware: Middleware) {
+  use (middleware: Layer) {
     this.app.use(middleware);
   }
 

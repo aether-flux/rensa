@@ -1,6 +1,6 @@
 {
   "name": "rensa",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "description": "Rensa is a fast, lightweight Node.js backend framework with Trie-based routing, middleware support, and an intuitive API for building scalable web applications.",
   "main": "dist/index.js",
   "exports": {
@@ -8,9 +8,6 @@
       "require": "./dist/index.js",
       "default": "./dist/index.js"
     }
-  },
-  "bin": {
-    "rensa": "cli/rensa.js"
   },
   "keywords": [
     "rensa",
@@ -37,6 +34,7 @@
     "api framework",
     "server-side",
     "javascript",
+    "typescript",
     "node framework"
   ],
   "author": "Amartya Chowdhury (aether-flux)",
@@ -54,12 +52,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "chalk": "^5.4.1",
-    "commander": "^13.1.0",
-    "figlet": "^1.8.0",
-    "inquirer": "^12.4.2",
-    "mime": "^4.0.6",
-    "ora": "^8.2.0"
+    "mime": "^4.0.6"
   },
   "funding": {
     "type": "buymeacoffee",

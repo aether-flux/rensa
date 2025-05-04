@@ -11,7 +11,7 @@ import { securityHeaders } from "../middlewares/security.js";
 import { cookieParser } from "../middlewares/cookies.js";
 import { session } from "../middlewares/session.js";
 import { envars } from "../middlewares/envars.js";
-import { Handler, Middleware } from "../types/routeTypes.js";
+import { Handler, Layer } from "../types/routeTypes.js";
 import { Request, Response } from "../types/httpTypes.js";
 
 export class Server {
@@ -24,14 +24,14 @@ export class Server {
     this.router = new Router();
   }
 
-  use (middleware: Middleware) {
+  use (middleware: Layer) {
     if (!this.server) this.createServer();
     this.router.use(middleware);
   }
 
   useBuiltin (midd: string, ...opts: any[]) {
-    let middleware: Middleware;
-    const builtins: Record<string, (...args: any[]) => Middleware> = {
+    let middleware: Layer;
+    const builtins: Record<string, (...args: any[]) => Layer> = {
       "cors": cors,
       "rate limiter": rateLimit,
       "logger": logger,

@@ -1,8 +1,8 @@
-import { Handler, Middleware, RouteData } from "../types/routeTypes.js";
+import { Handler, Layer, RouteData } from "../types/routeTypes.js";
 import { RouteStore } from "./RouteStore.js";
 
 export class Router {
-  private middlewares: Middleware[];
+  private middlewares: Layer[];
   private routes: { [method: string]: { [path: string]: RouteData } };
   private store: RouteStore;
   private notFoundHandler: Handler;
@@ -24,11 +24,11 @@ export class Router {
   async add (method: string, path: string, ...handlers: Function[]): Promise<void> {
     this.store.insert(path);
 
-    let middlewares: Middleware[] = [];
+    let middlewares: Layer[] = [];
     let handler: (req: any, res: any) => void;
 
     if (handlers.length > 1) {
-      middlewares = handlers.slice(0, -1) as Middleware[];
+      middlewares = handlers.slice(0, -1) as Layer[];
       handler = handlers[handlers.length - 1] as Handler;
     } else {
       handler = handlers[0] as Handler;
@@ -38,7 +38,7 @@ export class Router {
     this.routes[method][path] = {middlewares, handler};
   }
 
-  use (middleware: Middleware): void {
+  use (middleware: Layer): void {
     this.middlewares.push(middleware);
   }
 

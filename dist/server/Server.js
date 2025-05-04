@@ -35,34 +35,6 @@ export class Server {
             middleware = builtins[midd](...opts);
             this.use(middleware);
         }
-        //     if (midd === "cors") {
-        //       middleware = cors(...opts);
-        //       this.use(middleware);
-        //       return;
-        //     } else if (midd === "rate limiter") {
-        //       middleware = rateLimit(...opts);
-        //       this.use(middleware);
-        //       return;
-        //     } else if (midd === "logger") {
-        //       middleware = logger();
-        //       this.use(middleware);
-        //       return;
-        //     } else if (midd === "security") {
-        //       middleware = securityHeaders();
-        //       this.use(middleware);
-        //       return;
-        //     } else if (midd === "cookies") {
-        //       middleware = cookieParser();
-        //       this.use(middleware);
-        //       return;
-        //     } else if (midd === "sessions") {
-        //       middleware = session();
-        //       this.use(middleware);
-        //       return;
-        //     } else if (midd === "env") {
-        //       middleware = envars();
-        //       this.use(middleware);
-        //     }
     }
     viewEngine(engine, folder = 'views') {
         this.renderEngine = engine;

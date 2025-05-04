@@ -1,4 +1,4 @@
-import { Handler, Middleware } from "../types/routeTypes.js";
+import { Handler, Layer } from "../types/routeTypes.js";
 export declare class Router {
     private middlewares;
     private routes;
@@ -7,7 +7,7 @@ export declare class Router {
     constructor();
     setNotFound(handler: Handler): void;
     add(method: string, path: string, ...handlers: Function[]): Promise<void>;
-    use(middleware: Middleware): void;
+    use(middleware: Layer): void;
     handle(method: string, path: string, req: any, res: any): Promise<void>;
     handleRoute(method: string, path: string, req: any, res: any): Promise<void>;
 }

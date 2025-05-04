@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚠️ Changed
 - Middleware and handler internals now use stricter type checking.
+- CLI for creating a project from template has been moved to a separate package (`create-rensa-app`).
 
 ### ❗️Removed
 - Legacy JS-based internals have been removed completely.

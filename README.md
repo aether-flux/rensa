@@ -37,7 +37,7 @@ app.listen(3000, () => {
 ### Available Boilerplates
 You may also choose one of the available templates using the following command :
 ```sh
-npx rensa@latest
+npx create-rensa-app@latest
 ```
 
 *Available templates :*

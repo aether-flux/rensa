@@ -15,12 +15,16 @@ export class Server {
     constructor() {
         this.router = new Router();
     }
-    use(middleware) {
+    use(middleware, config) {
         if (!this.server)
             this.createServer();
-        this.router.use(middleware);
+        if (!config)
+            config = {};
+        this.router.use(middleware, config);
     }
-    useBuiltin(midd, ...opts) {
+    //useBuiltin(midd: string, config: LayerConfig, ...args: any[]): void;
+    //useBuiltin(midd: string, ...args: any[]): void;
+    useBuiltin(midd, ...args) {
         let middleware;
         const builtins = {
             "cors": cors,
@@ -31,10 +35,23 @@ export class Server {
             "sessions": session,
             "env": envars
         };
-        if (midd in builtins) {
-            middleware = builtins[midd](...opts);
-            this.use(middleware);
+        if (!(midd in builtins))
+            return;
+        let config = undefined;
+        let opts = [];
+        //if (args[0] && typeof args[0] === "object" && !Array.isArray(args[0]) && !(args[0] instanceof Function)) {
+        if (args[0] &&
+            typeof args[0] === "object" &&
+            !Array.isArray(args[0]) &&
+            ("scope" in args[0] || Object.keys(args[0]).length === 0)) {
+            config = args[0];
+            opts = args.slice(1);
         }
+        else {
+            opts = args;
+        }
+        middleware = builtins[midd](...opts);
+        this.use(middleware, config);
     }
     viewEngine(engine, folder = 'views') {
         this.renderEngine = engine;

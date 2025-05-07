@@ -1,8 +1,8 @@
-import { Handler, Layer, RouteData } from "../types/routeTypes.js";
+import { Handler, Layer, LayerConfig, LayerWithConfig, RouteData } from "../types/routeTypes.js";
 import { RouteStore } from "./RouteStore.js";
 
 export class Router {
-  private middlewares: Layer[];
+  private middlewares: LayerWithConfig[];
   private routes: { [method: string]: { [path: string]: RouteData } };
   private store: RouteStore;
   private notFoundHandler: Handler;
@@ -25,7 +25,7 @@ export class Router {
     this.store.insert(path);
 
     let middlewares: Layer[] = [];
-    let handler: (req: any, res: any) => void;
+    let handler: Handler;
 
     if (handlers.length > 1) {
       middlewares = handlers.slice(0, -1) as Layer[];
@@ -35,17 +35,24 @@ export class Router {
     }
 
     if (!this.routes[method]) this.routes[method] = {};
-    this.routes[method][path] = {middlewares, handler};
+
+    this.routes[method][path] = {
+      middlewares,
+      handler,
+    };
   }
 
-  use (middleware: Layer): void {
-    this.middlewares.push(middleware);
+  use (middleware: Layer, config?: LayerConfig): void {
+    this.middlewares.push({
+      fn: middleware,
+      config: config,
+    });
   }
 
   async handle (method: string, path: string, req: any, res: any): Promise<void> {
     // Handle middlewares
     let index = 0;
-    const middlewares =  [...this.middlewares];
+    const middlewares =  this.middlewares.filter(m => !m.config?.scope).map(m => m.fn);
 
     const next = async () => {
       if (index < middlewares.length) {
@@ -90,8 +97,14 @@ export class Router {
       return await this.notFoundHandler(req, res);
     }
 
-    const { middlewares, handler } = routeData;
+    const { middlewares: routeMidds, handler } = routeData;
     let index = 0;
+
+    const matchingScopedLayers = this.middlewares
+      .filter(m => m.config?.scope?.some(scopedPath => path.startsWith(scopedPath)))
+      .map(m => m.fn);
+
+    const middlewares = [...matchingScopedLayers, ...routeMidds]
 
     const next = async () => {
       if (index < middlewares.length) {

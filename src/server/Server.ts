@@ -11,7 +11,7 @@ import { securityHeaders } from "../middlewares/security.js";
 import { cookieParser } from "../middlewares/cookies.js";
 import { session } from "../middlewares/session.js";
 import { envars } from "../middlewares/envars.js";
-import { Handler, Layer } from "../types/routeTypes.js";
+import { Handler, Layer, LayerConfig } from "../types/routeTypes.js";
 import { Request, Response } from "../types/httpTypes.js";
 
 export class Server {
@@ -24,12 +24,17 @@ export class Server {
     this.router = new Router();
   }
 
-  use (middleware: Layer) {
+  use (middleware: Layer, config?: LayerConfig) {
     if (!this.server) this.createServer();
-    this.router.use(middleware);
+
+    if (!config) config = {};
+    this.router.use(middleware, config);
   }
 
-  useBuiltin (midd: string, ...opts: any[]) {
+  //useBuiltin(midd: string, config: LayerConfig, ...args: any[]): void;
+  //useBuiltin(midd: string, ...args: any[]): void;
+
+  useBuiltin (midd: string, ...args: (LayerConfig | any)[]): void {
     let middleware: Layer;
     const builtins: Record<string, (...args: any[]) => Layer> = {
       "cors": cors,
@@ -41,10 +46,26 @@ export class Server {
       "env": envars
     };
 
-    if (midd in builtins) {
-      middleware = builtins[midd](...opts);
-      this.use(middleware);
+    if (!(midd in builtins)) return;
+
+    let config: LayerConfig | undefined = undefined;
+    let opts: any[] = [];
+
+    //if (args[0] && typeof args[0] === "object" && !Array.isArray(args[0]) && !(args[0] instanceof Function)) {
+    if (
+      args[0] &&
+      typeof args[0] === "object" &&
+      !Array.isArray(args[0]) &&
+      ("scope" in args[0] || Object.keys(args[0]).length === 0)
+    ) {
+      config = args[0] as LayerConfig;
+      opts = args.slice(1);
+    } else {
+      opts = args;
     }
+
+    middleware = (builtins[midd] as (...args: any[]) => Layer)(...opts);
+    this.use(middleware, config);
   }
 
   viewEngine (engine: string, folder: string = 'views') {
@@ -52,23 +73,23 @@ export class Server {
     this.renderFolder = gpath.resolve(folder);
   }
 
-  get (path: string, ...handlers: Handler[]) {
+  get (path: string, ...handlers: Function[]) {
     this.router.add("GET", path, ...handlers);
   }
 
-  post (path: string, ...handlers: Handler[]) {
+  post (path: string, ...handlers: Function[]) {
     this.router.add("POST", path, ...handlers);
   }
 
-  put (path: string, ...handlers: Handler[]) {
+  put (path: string, ...handlers: Function[]) {
     this.router.add("PUT", path, ...handlers);
   }
 
-  patch (path: string, ...handlers: Handler[]) {
+  patch (path: string, ...handlers: Function[]) {
     this.router.add("PATCH", path, ...handlers);
   }
 
-  delete (path: string, ...handlers: Handler[]) {
+  delete (path: string, ...handlers: Function[]) {
     this.router.add("DELETE", path, ...handlers);
   }
 

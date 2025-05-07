@@ -1,6 +1,6 @@
 import { loadEnv } from "./middlewares/envars.js";
 import { Server } from "./server/Server.js";
-import { Handler, Layer } from "./types/routeTypes.js";
+import { Handler, Layer, LayerConfig } from "./types/routeTypes.js";
 
 export type { Request, Response } from "./types/httpTypes.js";
 export type { Handler, Layer };
@@ -16,8 +16,8 @@ export class Rensa {
 //     this.server = this.app.server;
   }
 
-  use (middleware: Layer) {
-    this.app.use(middleware);
+  use (middleware: Layer, config?: LayerConfig) {
+    this.app.use(middleware, config);
   }
 
   useBuiltin (midd: string, ...opts: any[]) {
@@ -28,23 +28,23 @@ export class Rensa {
     this.app.viewEngine(engine, folder);
   }
 
-  get (path: string, ...handlers: Handler[]) {
+  get (path: string, ...handlers: Function[]) {
     this.app.get(path, ...handlers);
   }
 
-  post (path: string, ...handlers: Handler[]) {
+  post (path: string, ...handlers: Function[]) {
     this.app.post(path, ...handlers);
   }
 
-  put (path: string, ...handlers: Handler[]) {
+  put (path: string, ...handlers: Function[]) {
     this.app.put(path, ...handlers);
   }
 
-  patch (path: string, ...handlers: Handler[]) {
+  patch (path: string, ...handlers: Function[]) {
     this.app.patch(path, ...handlers);
   }
 
-  delete (path: string, ...handlers: Handler[]) {
+  delete (path: string, ...handlers: Function[]) {
     this.app.delete(path, ...handlers);
   }
 

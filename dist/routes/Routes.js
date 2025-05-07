@@ -25,15 +25,21 @@ export class Router {
         }
         if (!this.routes[method])
             this.routes[method] = {};
-        this.routes[method][path] = { middlewares, handler };
+        this.routes[method][path] = {
+            middlewares,
+            handler,
+        };
     }
-    use(middleware) {
-        this.middlewares.push(middleware);
+    use(middleware, config) {
+        this.middlewares.push({
+            fn: middleware,
+            config: config,
+        });
     }
     async handle(method, path, req, res) {
         // Handle middlewares
         let index = 0;
-        const middlewares = [...this.middlewares];
+        const middlewares = this.middlewares.filter(m => !m.config?.scope).map(m => m.fn);
         const next = async () => {
             if (index < middlewares.length) {
                 const middleware = middlewares[index];
@@ -71,8 +77,12 @@ export class Router {
         if (!routeData) {
             return await this.notFoundHandler(req, res);
         }
-        const { middlewares, handler } = routeData;
+        const { middlewares: routeMidds, handler } = routeData;
         let index = 0;
+        const matchingScopedLayers = this.middlewares
+            .filter(m => m.config?.scope?.some(scopedPath => path.startsWith(scopedPath)))
+            .map(m => m.fn);
+        const middlewares = [...matchingScopedLayers, ...routeMidds];
         const next = async () => {
             if (index < middlewares.length) {
                 let midw = middlewares[index];

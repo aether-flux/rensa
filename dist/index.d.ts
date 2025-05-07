@@ -1,19 +1,19 @@
 import { Server } from "./server/Server.js";
-import { Handler, Layer } from "./types/routeTypes.js";
+import { Handler, Layer, LayerConfig } from "./types/routeTypes.js";
 export type { Request, Response } from "./types/httpTypes.js";
 export type { Handler, Layer };
 export declare class Rensa {
     app: Server;
     createServer: () => void;
     constructor();
-    use(middleware: Layer): void;
+    use(middleware: Layer, config?: LayerConfig): void;
     useBuiltin(midd: string, ...opts: any[]): void;
     viewEngine(engine: string, folder?: string): void;
-    get(path: string, ...handlers: Handler[]): void;
-    post(path: string, ...handlers: Handler[]): void;
-    put(path: string, ...handlers: Handler[]): void;
-    patch(path: string, ...handlers: Handler[]): void;
-    delete(path: string, ...handlers: Handler[]): void;
+    get(path: string, ...handlers: Function[]): void;
+    post(path: string, ...handlers: Function[]): void;
+    put(path: string, ...handlers: Function[]): void;
+    patch(path: string, ...handlers: Function[]): void;
+    delete(path: string, ...handlers: Function[]): void;
     notFound(handler: Handler): void;
     listen(port: number, callback: () => void): void;
 }

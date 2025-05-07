@@ -7,8 +7,8 @@ export class Rensa {
         //     this.app.createServer();
         //     this.server = this.app.server;
     }
-    use(middleware) {
-        this.app.use(middleware);
+    use(middleware, config) {
+        this.app.use(middleware, config);
     }
     useBuiltin(midd, ...opts) {
         this.app.useBuiltin(midd, ...opts);

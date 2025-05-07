@@ -6,8 +6,11 @@ export declare class Rensa {
     app: Server;
     createServer: () => void;
     constructor();
-    use(middleware: Layer, config?: LayerConfig): void;
+    use(...layers: Layer[]): void;
+    use(...layersAndConfig: [...Layer[], LayerConfig]): void;
     useBuiltin(midd: string, ...opts: any[]): void;
+    createPreset(presetName: string, ...layers: Layer[]): void;
+    usePreset(presetName: string, config?: LayerConfig): void;
     viewEngine(engine: string, folder?: string): void;
     get(path: string, ...handlers: Function[]): void;
     post(path: string, ...handlers: Function[]): void;

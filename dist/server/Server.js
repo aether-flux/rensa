@@ -2,6 +2,7 @@ import http from "http";
 import gpath from "path";
 import fs from 'fs';
 import mime from 'mime';
+import chalk from 'chalk';
 import { Router } from "../routes/Routes.js";
 import { URLSearchParams } from "url";
 import { cors } from "../middlewares/cors.js";
@@ -14,6 +15,7 @@ import { envars } from "../middlewares/envars.js";
 export class Server {
     constructor() {
         this.router = new Router();
+        this.presets = {};
     }
     use(middleware, config) {
         if (!this.server)
@@ -22,8 +24,6 @@ export class Server {
             config = {};
         this.router.use(middleware, config);
     }
-    //useBuiltin(midd: string, config: LayerConfig, ...args: any[]): void;
-    //useBuiltin(midd: string, ...args: any[]): void;
     useBuiltin(midd, ...args) {
         let middleware;
         const builtins = {
@@ -39,7 +39,6 @@ export class Server {
             return;
         let config = undefined;
         let opts = [];
-        //if (args[0] && typeof args[0] === "object" && !Array.isArray(args[0]) && !(args[0] instanceof Function)) {
         if (args[0] &&
             typeof args[0] === "object" &&
             !Array.isArray(args[0]) &&
@@ -50,8 +49,20 @@ export class Server {
         else {
             opts = args;
         }
+        if (config && config.scope && config.scope[0] !== "/") {
+            console.log(`${chalk.yellow("WARN:")} Scope paths should start with '/'.`);
+        }
         middleware = builtins[midd](...opts);
         this.use(middleware, config);
+    }
+    createPreset(presetName, ...layers) {
+        this.presets[presetName] = layers;
+    }
+    usePreset(presetName, config) {
+        const layers = this.presets[presetName];
+        if (!layers)
+            return;
+        layers.forEach(l => this.use(l, config));
     }
     viewEngine(engine, folder = 'views') {
         this.renderEngine = engine;

@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { loadEnv } from "./middlewares/envars.js";
 import { Server } from "./server/Server.js";
 import { Handler, Layer, LayerConfig } from "./types/routeTypes.js";
@@ -12,16 +13,51 @@ export class Rensa {
   constructor () {
     this.app = new Server();
     this.createServer = this.app.createServer;
-//     this.app.createServer();
-//     this.server = this.app.server;
   }
 
-  use (middleware: Layer, config?: LayerConfig) {
-    this.app.use(middleware, config);
+  use(...layers: Layer[]): void;
+  use(...layersAndConfig: [...Layer[], LayerConfig]): void;
+
+  use (...args: (Layer | LayerConfig)[]): void {
+    let config: LayerConfig | undefined;
+    let layers: Layer[];
+
+    const last = args[args.length - 1];
+
+    if (
+      last &&
+      typeof last === "object" &&
+      !Array.isArray(last) &&
+      !(last instanceof Function) &&
+      "scope" in last
+    ) {
+      config = last as LayerConfig;
+      layers = args.slice(0, -1) as Layer[];
+    } else {
+      layers = args as Layer[];
+    }
+
+    if (config && config.scope && config.scope[0] !== "/") {
+      console.log(`${chalk.yellow("WARN:")} Scope paths should start with '/'.`);
+    }
+
+    layers.forEach(l => this.app.use(l, config));
   }
 
   useBuiltin (midd: string, ...opts: any[]) {
     this.app.useBuiltin(midd, ...opts);
+  }
+
+  createPreset (presetName: string, ...layers: Layer[]) {
+    this.app.createPreset(presetName, ...layers);
+  }
+
+  usePreset (presetName: string, config?: LayerConfig) {
+    if (config && config.scope && config.scope[0] !== "/") {
+      console.log(`${chalk.yellow("WARN:")} Scope paths should start with '/'.`);
+    }
+
+    this.app.usePreset(presetName, config);
   }
 
   viewEngine (engine: string, folder: string = 'views') {

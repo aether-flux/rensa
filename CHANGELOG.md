@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2025-05-09
+
+### ✨ Added
+- Use multiple Layers at once - app.use(layer1, layer2, ...);
+- Scope Layers to make them execute on specific routes - app.use(layer1, layer2, ..., { scope: ["/dashboard", "/profile"] });
+- Introducing Presets: Group Layers together under a name. Create with app.createPreset("preset-name", ...layers) and use with app.usePreset("preset-name", config?).
+- Visit the docs for detailed information about usage.
+
+### ⚠️ Changed
+- Nothing previous has been changed in this version.
+
+### ❗ Removed
+- Nothing previous has been removed in this version
+
 ## [2.0.0] - 2025-05-04
 
 ### ✨ Added

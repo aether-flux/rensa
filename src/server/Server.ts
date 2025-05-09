@@ -51,14 +51,16 @@ export class Server {
     let config: LayerConfig | undefined = undefined;
     let opts: any[] = [];
 
+    let last = args[args.length - 1];
+
     if (
-      args[0] &&
-      typeof args[0] === "object" &&
-      !Array.isArray(args[0]) &&
-      ("scope" in args[0] || Object.keys(args[0]).length === 0)
+      last &&
+      typeof last === "object" &&
+      !Array.isArray(last) &&
+      ("scope" in last || Object.keys(last).length === 0)
     ) {
-      config = args[0] as LayerConfig;
-      opts = args.slice(1);
+      config = last as LayerConfig;
+      opts = args.slice(0, -1);
     } else {
       opts = args;
     }

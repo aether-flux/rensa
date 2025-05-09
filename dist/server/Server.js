@@ -39,12 +39,13 @@ export class Server {
             return;
         let config = undefined;
         let opts = [];
-        if (args[0] &&
-            typeof args[0] === "object" &&
-            !Array.isArray(args[0]) &&
-            ("scope" in args[0] || Object.keys(args[0]).length === 0)) {
-            config = args[0];
-            opts = args.slice(1);
+        let last = args[args.length - 1];
+        if (last &&
+            typeof last === "object" &&
+            !Array.isArray(last) &&
+            ("scope" in last || Object.keys(last).length === 0)) {
+            config = last;
+            opts = args.slice(0, -1);
         }
         else {
             opts = args;

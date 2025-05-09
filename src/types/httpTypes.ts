@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 
+// Request type
 export interface Request extends IncomingMessage {
   body?: any;
   get?: (headerName: string) => string | string[] | null;
@@ -8,6 +9,7 @@ export interface Request extends IncomingMessage {
   session: Record<string, any>;
 };
 
+// Response type
 export interface Response extends ServerResponse {
   send: (data: any) => void;
   json: (obj: Object) => void;

@@ -1,3 +1,4 @@
+import { Request, Response } from "../types/httpTypes.js";
 import { Handler, Layer, LayerConfig, LayerWithConfig, RouteData } from "../types/routeTypes.js";
 import { RouteStore } from "./RouteStore.js";
 
@@ -49,7 +50,7 @@ export class Router {
     });
   }
 
-  async handle (method: string, path: string, req: any, res: any): Promise<void> {
+  async handle (method: string, path: string, req: Request, res: Response): Promise<void> {
     // Handle middlewares
     let index = 0;
     const middlewares =  this.middlewares.filter(m => !m.config?.scope).map(m => m.fn);
@@ -72,7 +73,7 @@ export class Router {
     await next();
   }
 
-  async handleRoute (method: string, path: string, req: any, res: any): Promise<void> {
+  async handleRoute (method: string, path: string, req: Request, res: Response): Promise<void> {
     req.params = {};
 
     if (!this.routes[method]) {

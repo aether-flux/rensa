@@ -1,6 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 export interface Request extends IncomingMessage {
     body?: any;
+    params?: any;
     get?: (headerName: string) => string | string[] | null;
     protocol?: string;
     cookies: Record<string, string>;

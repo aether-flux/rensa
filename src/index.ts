@@ -1,7 +1,10 @@
 import chalk from 'chalk';
 import { loadEnv } from "./middlewares/envars.js";
 import { Server } from "./server/Server.js";
-import { Handler, Layer, LayerConfig } from "./types/routeTypes.js";
+import { ComposeConfig, Handler, Layer, LayerConfig } from "./types/routeTypes.js";
+import { walk } from './utils/fileWalker.js';
+import { fileParser } from './utils/fileParser.js';
+import { pathToFileURL } from 'url';
 
 export type { Request, Response } from "./types/httpTypes.js";
 export type { Handler, Layer };
@@ -91,6 +94,30 @@ export class Rensa {
   listen (port: number, callback: () => void) {
     this.createServer();
     this.app.listen(port, callback);
+  }
+
+  async compose (config: ComposeConfig) {
+    const routes = config?.routes || "routes";
+
+    // Apply Builtins
+    for (const b of config?.builtins || []) this.useBuiltin(b);
+
+    // Apply Layers
+    if (config?.layers) {
+      const layerFiles = await walk(config.layers);
+      for (const file of layerFiles) {
+        const layer = (await import(file)).default;
+        this.use(layer);
+      }
+    }
+
+    // Apply Routes
+    const routeFiles = await walk(routes);
+    for (const { method, route, file } of fileParser(routeFiles, routes)) {
+      const handler = (await import(pathToFileURL(file).href)).default;
+      const normalizedRoute = route.endsWith("/") && route !== "/" ? route.slice(0, -1) : route;
+      (this as any)[method](normalizedRoute, handler);
+    }
   }
 }
 

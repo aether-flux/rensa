@@ -28,3 +28,10 @@ export type RouteNode = {
 // Route hashmap type
 export type RouteMap = { [key: string]: RouteNode };
 
+// Config for File-Based Routing (compose)
+export type ComposeConfig = {
+  routes?: string;
+  layers?: string;
+  builtins?: string[];
+};
+

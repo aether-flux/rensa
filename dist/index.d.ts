@@ -1,5 +1,5 @@
 import { Server } from "./server/Server.js";
-import { Handler, Layer, LayerConfig } from "./types/routeTypes.js";
+import { ComposeConfig, Handler, Layer, LayerConfig } from "./types/routeTypes.js";
 export type { Request, Response } from "./types/httpTypes.js";
 export type { Handler, Layer };
 export declare class Rensa {
@@ -19,5 +19,6 @@ export declare class Rensa {
     delete(path: string, ...handlers: Function[]): void;
     notFound(handler: Handler): void;
     listen(port: number, callback: () => void): void;
+    compose(config: ComposeConfig): Promise<void>;
 }
 export declare function env(): void;

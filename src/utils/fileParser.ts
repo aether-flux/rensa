@@ -3,6 +3,12 @@ import path from 'path';
 export const fileParser = (files: string[], routes: string) => {
   return files.map(file => {
     const relative = path.relative(routes, file).replace(/\\/g, "/");
+
+     // Check for routes/notFound.js (or .ts)
+    if (relative === "notFound.js" || relative === "notFound.ts") {
+      return { method: "notFound", route: null, file };
+    }
+
     const parts = relative.split("/");
 
     const methodPart = parts.pop()!;

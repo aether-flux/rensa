@@ -4,87 +4,178 @@ import { Server } from "./server/Server.js";
 import { walk } from './utils/fileWalker.js';
 import { fileParser } from './utils/fileParser.js';
 import { pathToFileURL } from 'url';
+import { errorHandler } from './utils/errorHandler.js';
 export class Rensa {
     constructor() {
         this.app = new Server();
         this.createServer = this.app.createServer;
     }
     use(...args) {
-        let config;
-        let layers;
-        const last = args[args.length - 1];
-        if (last &&
-            typeof last === "object" &&
-            !Array.isArray(last) &&
-            !(last instanceof Function) &&
-            "scope" in last) {
-            config = last;
-            layers = args.slice(0, -1);
+        try {
+            let config;
+            let layers;
+            const last = args[args.length - 1];
+            if (last &&
+                typeof last === "object" &&
+                !Array.isArray(last) &&
+                !(last instanceof Function) &&
+                "scope" in last) {
+                config = last;
+                layers = args.slice(0, -1);
+            }
+            else {
+                layers = args;
+            }
+            if (config && config.scope && config.scope[0] !== "/") {
+                console.log(`${chalk.yellow("WARN:")} Scope paths should start with '/'.`);
+            }
+            layers.forEach(l => this.app.use(l, config));
         }
-        else {
-            layers = args;
+        catch (e) {
+            errorHandler(e);
         }
-        if (config && config.scope && config.scope[0] !== "/") {
-            console.log(`${chalk.yellow("WARN:")} Scope paths should start with '/'.`);
-        }
-        layers.forEach(l => this.app.use(l, config));
     }
     useBuiltin(midd, ...opts) {
-        this.app.useBuiltin(midd, ...opts);
+        try {
+            this.app.useBuiltin(midd, ...opts);
+        }
+        catch (e) {
+            errorHandler(e);
+        }
     }
     createPreset(presetName, ...layers) {
-        this.app.createPreset(presetName, ...layers);
+        try {
+            this.app.createPreset(presetName, ...layers);
+        }
+        catch (e) {
+            errorHandler(e);
+        }
     }
     usePreset(presetName, config) {
-        if (config && config.scope && config.scope[0] !== "/") {
-            console.log(`${chalk.yellow("WARN:")} Scope paths should start with '/'.`);
+        try {
+            if (config && config.scope && config.scope[0] !== "/") {
+                console.log(`${chalk.yellow("WARN:")} Scope paths should start with '/'.`);
+            }
+            this.app.usePreset(presetName, config);
         }
-        this.app.usePreset(presetName, config);
+        catch (e) {
+            errorHandler(e);
+        }
     }
     viewEngine(engine, folder = 'views') {
-        this.app.viewEngine(engine, folder);
+        try {
+            this.app.viewEngine(engine, folder);
+        }
+        catch (e) {
+            errorHandler(e);
+        }
     }
     get(path, ...handlers) {
-        this.app.get(path, ...handlers);
+        try {
+            this.app.get(path, ...handlers);
+        }
+        catch (e) {
+            errorHandler(e);
+        }
     }
     post(path, ...handlers) {
-        this.app.post(path, ...handlers);
+        try {
+            this.app.post(path, ...handlers);
+        }
+        catch (e) {
+            errorHandler(e);
+        }
     }
     put(path, ...handlers) {
-        this.app.put(path, ...handlers);
+        try {
+            this.app.put(path, ...handlers);
+        }
+        catch (e) {
+            errorHandler(e);
+        }
     }
     patch(path, ...handlers) {
-        this.app.patch(path, ...handlers);
+        try {
+            this.app.patch(path, ...handlers);
+        }
+        catch (e) {
+            errorHandler(e);
+        }
     }
     delete(path, ...handlers) {
-        this.app.delete(path, ...handlers);
+        try {
+            this.app.delete(path, ...handlers);
+        }
+        catch (e) {
+            errorHandler(e);
+        }
     }
     notFound(handler) {
-        this.app.notFound(handler);
+        try {
+            this.app.notFound(handler);
+        }
+        catch (e) {
+            errorHandler(e);
+        }
     }
     listen(port, callback) {
-        this.createServer();
-        this.app.listen(port, callback);
+        try {
+            this.createServer();
+            this.app.listen(port, callback);
+        }
+        catch (e) {
+            errorHandler(e);
+        }
     }
     async compose(config) {
-        const routes = config?.routes || "routes";
-        // Apply Builtins
-        for (const b of config?.builtins || [])
-            this.useBuiltin(b);
-        // Apply Layers
-        if (config?.layers) {
-            const layerFiles = await walk(config.layers);
-            for (const file of layerFiles) {
-                const layer = (await import(file)).default;
-                this.use(layer);
+        try {
+            const routes = config?.routes || "routes";
+            // Apply Builtins
+            for (const b of config?.builtins || [])
+                this.useBuiltin(b);
+            // Apply Layers
+            if (config?.layers) {
+                const layerFiles = await walk(config.layers);
+                for (const file of layerFiles) {
+                    const layerImports = (await import(pathToFileURL(file).href));
+                    const layer = layerImports.layer || layerImports.default;
+                    const layerConfig = layerImports.config;
+                    console.log("Applying layer");
+                    if (layerConfig) {
+                        this.use(layer(), layerConfig);
+                    }
+                    else {
+                        this.use(layer());
+                    }
+                }
+            }
+            // Apply Routes
+            console.log("Routing starting");
+            const routeFiles = await walk(routes);
+            for (const { method, route, file } of fileParser(routeFiles, routes)) {
+                const routeImports = (await import(pathToFileURL(file).href));
+                const handler = routeImports.handler || routeImports.default;
+                if (typeof handler !== "function") {
+                    throw new Error(`Invalid handler in file ${file}. Expected a function export 'handler' or 'default'.`);
+                }
+                const routeConfig = routeImports.config;
+                const routeLayers = routeConfig?.layers || [];
+                console.log("Applying handler:");
+                // Handling 404 routes (notFound.js / notFound.ts)
+                if (route === null && method === "notFound") {
+                    console.log("NotFound handler");
+                    this.notFound(handler);
+                }
+                else {
+                    console.log("Method handler");
+                    const normalizedRoute = route.endsWith("/") && route !== "/" ? route.slice(0, -1) : route; // Convert /home/ to /home
+                    this[method](normalizedRoute, ...routeLayers, handler);
+                }
+                console.log(`Applied handler ${route === null ? "null" : route}!\n`);
             }
         }
-        // Apply Routes
-        const routeFiles = await walk(routes);
-        for (const { method, route, file } of fileParser(routeFiles, routes)) {
-            const handler = (await import(pathToFileURL(file).href)).default;
-            const normalizedRoute = route.endsWith("/") && route !== "/" ? route.slice(0, -1) : route;
-            this[method](normalizedRoute, handler);
+        catch (e) {
+            errorHandler(e);
         }
     }
 }

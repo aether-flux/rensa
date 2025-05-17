@@ -19,6 +19,6 @@ export declare class Rensa {
     delete(path: string, ...handlers: Function[]): void;
     notFound(handler: Handler): void;
     listen(port: number, callback: () => void): void;
-    compose(config: ComposeConfig): Promise<void>;
+    compose(config?: ComposeConfig): Promise<void>;
 }
 export declare function env(): void;

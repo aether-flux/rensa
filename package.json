@@ -3,6 +3,9 @@
   "version": "2.1.2",
   "description": "Rensa is a fast, lightweight Node.js backend framework with Trie-based routing, middleware support, and an intuitive API for building scalable web applications.",
   "main": "dist/index.js",
+  "bin": {
+    "rensa": "./dist/cli/main.js"
+  },
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -59,7 +62,9 @@
   },
   "dependencies": {
     "chalk": "^5.4.1",
-    "mime": "^4.0.6"
+    "commander": "^13.1.0",
+    "mime": "^4.0.6",
+    "watchpack": "^2.4.2"
   },
   "funding": {
     "type": "buymeacoffee",

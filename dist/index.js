@@ -140,7 +140,6 @@ export class Rensa {
                     const layerImports = (await import(pathToFileURL(file).href));
                     const layer = layerImports.layer || layerImports.default;
                     const layerConfig = layerImports.config;
-                    console.log("Applying layer");
                     if (layerConfig) {
                         this.use(layer(), layerConfig);
                     }
@@ -150,7 +149,6 @@ export class Rensa {
                 }
             }
             // Apply Routes
-            console.log("Routing starting");
             const routeFiles = await walk(routes);
             for (const { method, route, file } of fileParser(routeFiles, routes)) {
                 const routeImports = (await import(pathToFileURL(file).href));
@@ -160,18 +158,14 @@ export class Rensa {
                 }
                 const routeConfig = routeImports.config;
                 const routeLayers = routeConfig?.layers || [];
-                console.log("Applying handler:");
                 // Handling 404 routes (notFound.js / notFound.ts)
                 if (route === null && method === "notFound") {
-                    console.log("NotFound handler");
                     this.notFound(handler);
                 }
                 else {
-                    console.log("Method handler");
                     const normalizedRoute = route.endsWith("/") && route !== "/" ? route.slice(0, -1) : route; // Convert /home/ to /home
                     this[method](normalizedRoute, ...routeLayers, handler);
                 }
-                console.log(`Applied handler ${route === null ? "null" : route}!\n`);
             }
         }
         catch (e) {

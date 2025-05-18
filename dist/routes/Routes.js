@@ -1,4 +1,5 @@
-import { RouteStore } from "./RouteStore.js";
+// import { RouteStore } from "./RouteStore.js";
+import { RouteStore } from "../../rust/index.js";
 export class Router {
     constructor() {
         this.middlewares = [];
@@ -69,7 +70,7 @@ export class Router {
         if (!routeData) {
             const result = this.store.search(path);
             if (result) {
-                const { params, url } = result;
+                const { params, pattern: url } = result;
                 req.params = params;
                 routeData = this.routes[method][url];
             }

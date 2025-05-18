@@ -1,6 +1,7 @@
 import { Request, Response } from "../types/httpTypes.js";
 import { Handler, Layer, LayerConfig, LayerWithConfig, RouteData } from "../types/routeTypes.js";
-import { RouteStore } from "./RouteStore.js";
+// import { RouteStore } from "./RouteStore.js";
+import { RouteStore } from "../../rust/index.js";
 
 export class Router {
   private middlewares: LayerWithConfig[];
@@ -88,7 +89,7 @@ export class Router {
       const result = this.store.search(path);
 
       if (result) {
-        const { params, url } = result;
+        const { params, pattern: url } = result;
         req.params = params;
         routeData = this.routes[method][url];
       }

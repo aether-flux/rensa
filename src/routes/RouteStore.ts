@@ -1,4 +1,7 @@
 import { RouteMap, RouteNode } from "../types/routeTypes";
+import { require } from "../utils/require.js";
+
+const { shout } = require("../../rust/index.node");
 
 class Node {
   children: { [key: string]: Node };
@@ -7,6 +10,8 @@ class Node {
   constructor () {
     this.children = {};  // Store characters
     this.eor = false;  // Check if path or route ends (eor = end of route)
+
+    console.log(shout("aetheros"));
   }
 };
 

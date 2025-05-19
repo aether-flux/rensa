@@ -12,6 +12,7 @@ export declare class Rensa {
     createPreset(presetName: string, ...layers: Layer[]): void;
     usePreset(presetName: string, config?: LayerConfig): void;
     viewEngine(engine: string, folder?: string): void;
+    static(folder?: string): void;
     get(path: string, ...handlers: Function[]): void;
     post(path: string, ...handlers: Function[]): void;
     put(path: string, ...handlers: Function[]): void;

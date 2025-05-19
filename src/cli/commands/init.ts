@@ -22,11 +22,19 @@ const configContent = `export default {
   // Apply any layers manually (works in "files" mode only)
   // layers: [{
   //   layerFn,
-  //   { scope: ['/home'] }
+  //   scope: ['/home']
   // }],
 
   // Builtin Layers (if any) (works in "files" mode only)
   // builtins: ["cors", "logger"],
+
+  // Set view engine and views directory
+  // If 'views' is provided, you must provide a 'viewEngine' as well. Available engines: 'ejs'
+  // viewEngine: 'ejs',
+  // views: 'views',    // Optional if you provide 'viewEngine', defaults to 'views'
+
+  // Load static files
+  // staticDir: 'public',
 
   // Port where the server would listen to. Must be provided.
   port: process.env.PORT || 5000,

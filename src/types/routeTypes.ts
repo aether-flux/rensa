@@ -32,6 +32,9 @@ export type RouteMap = { [key: string]: RouteNode };
 export type ComposeConfig = {
   routes?: string;
   layers?: string;
-  builtins?: string[];
+  builtins?: [string, ...any][];
+  staticDir?: string;
+  viewEngine?: string;
+  views?: string;
 };
 

@@ -5,7 +5,10 @@ import { ComposeConfig, Handler, Layer, LayerConfig } from "./types/routeTypes.j
 import { walk } from './utils/fileWalker.js';
 import { fileParser } from './utils/fileParser.js';
 import { pathToFileURL } from 'url';
+import path from "path";
+import fs from "fs";
 import { errorHandler } from './utils/errorHandler.js';
+import { Request, Response } from './types/httpTypes.js';
 
 export type { Request, Response } from "./types/httpTypes.js";
 export type { Handler, Layer };
@@ -88,6 +91,27 @@ export class Rensa {
     }
   }
 
+  static (folder: string = 'public') {
+    try {
+      this.use((req: Request, res: Response, next: () => void) => {
+        if (req.url?.startsWith(`/${folder}/`)) {
+          const filePath = path.join(process.cwd(), req.url);
+          fs.readFile(filePath, (err, data) => {
+            if (err) {
+              res.statusCode = 404;
+              return res.end("File not found");
+            }
+            res.end(data);
+          });
+        } else {
+          next();
+        }
+      });
+    } catch (e) {
+      errorHandler(e);
+    }
+  }
+
   get (path: string, ...handlers: Function[]) {
     try {
       this.app.get(path, ...handlers);
@@ -150,7 +174,7 @@ export class Rensa {
       const routes = config?.routes || "routes";
 
       // Apply Builtins
-      for (const b of config?.builtins || []) this.useBuiltin(b);
+      for (const b of config?.builtins || []) this.useBuiltin(b[0], ...b.slice(1));
 
       // Apply Layers
       if (config?.layers) {
@@ -166,6 +190,20 @@ export class Rensa {
             this.use(layer());
           }
         }
+      }
+
+      // Apply views
+      if (config?.views && !config?.viewEngine) {
+        throw new Error(`A view engine must be provided if you specify a 'views' directory.\nAvailable view engines: 'ejs'`)
+      }
+
+      if (config?.viewEngine) {
+        this.viewEngine(config?.viewEngine, config?.views);
+      }
+
+      // Load static files
+      if (config?.staticDir) {
+        this.static(config?.staticDir);
       }
 
       // Apply Routes

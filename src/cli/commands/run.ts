@@ -1,4 +1,5 @@
 import { Rensa } from "../../index.js";
+import { RensaConfig } from "../../types/configTypes.js";
 import { errorHandler } from "../../utils/errorHandler.js"
 import { createServerFromConfig } from "../utils/createServerFromConfig.js";
 import { loadConfig } from "../utils/loadConfig.js";
@@ -6,7 +7,7 @@ import chalk from "chalk";
 
 export const run = async (root?: string) => {
   try {
-    const config = await loadConfig(root);
+    const config: RensaConfig = await loadConfig(root);
     let app: Rensa;
 
     if (!config.port) {
@@ -14,7 +15,7 @@ export const run = async (root?: string) => {
     }
 
     if (!config.mode || config.mode === "manual") {
-      app = config.app;
+      app = config.app as Rensa;
 
       if (!app) {
         throw new Error("In manual mode, you must provide an 'app' instance.\nIn your rensa.config.js, add a field-- app: app\nAnd create this 'app' instance as-- const app = new Rensa()");

@@ -16,16 +16,13 @@ const configContent = `export default {
   // routesDir: "routes",
 
   // Directory where layers will be defined (for "files" mode). If nothing is provided, Layers won't get applied by default.
-  // layersDir: "layers",
+  // layersDir: "layers/global",
 
   // Apply any layers manually (works in "files" mode only)
-  // layers: [{
-  //   layerFn,
-  //   scope: ['/home']
-  // }],
+  // layers: [[layerFn1, { scope: ["/"] }], [layerFn2, { scope: ["/home"] }]],
 
   // Builtin Layers (if any) (works in "files" mode only)
-  // builtins: ["cors", "logger"],
+  // builtins: [["logger"], ["rate limiter", 60000, 20]],
 
   // Set view engine and views directory
   // If 'views' is provided, you must provide a 'viewEngine' as well. Available engines: 'ejs'

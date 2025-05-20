@@ -10,6 +10,10 @@
     ".": {
       "require": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./compose": {
+      "require": "./dist/exports/compose/index.js",
+      "default": "./dist/exports/compose/index.js"
     }
   },
   "files": [

@@ -21,6 +21,9 @@ export type RouteNode = {
 export type RouteMap = {
     [key: string]: RouteNode;
 };
+export type RouteConfig = {
+    layers: Layer[];
+};
 export type ComposeConfig = {
     routes?: string;
     layers?: string;

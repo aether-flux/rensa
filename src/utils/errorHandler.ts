@@ -3,7 +3,7 @@ import chalk from "chalk";
 export const errorHandler = (e: unknown, ctx?: string) => {
   const msg: string = e instanceof Error ? e.message : typeof e === "string" ? e : "Unknown error occured.";
 
-  console.error(`\n${chalk.red(`ERR${ctx ? ` - ${ctx}` : ""}:`)}`);
+  console.error(`\n${chalk.red(`ERROR${ctx ? ` - ${ctx}` : ""}:`)}`);
   console.error("→", msg);
   
   if (e instanceof Error && e.stack) {

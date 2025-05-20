@@ -19,12 +19,15 @@ export const run = async (root) => {
                 console.log(`\n${chalk.yellow("[rensa]")} Server started at port ${config.port}...\n`);
             });
         }
-        else if (config.mode === "files") {
+        else if (config.mode === "compose") {
             app = new Rensa();
             createServerFromConfig(app, config);
             app.listen(config.port, () => {
                 console.log(`\n${chalk.yellow("[rensa]")} Server started at port ${config.port}...\n`);
             });
+        }
+        else {
+            throw new Error(`Mode ${config.mode} is not valid. Available modes: "manual" | "compose"`);
         }
     }
     catch (e) {

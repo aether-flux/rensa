@@ -5,7 +5,7 @@ import { errorHandler } from "../../utils/errorHandler.js";
 
 const configContent = `export default {
   // Mode of using Rensa. "files" means automatic file-based routing. Switch to "manual" for complete control.
-  mode: "files",
+  mode: "compose",
   // OR
   // mode: "manual",
 

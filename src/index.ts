@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { loadEnv } from "./middlewares/envars.js";
 import { Server } from "./server/Server.js";
-import { ComposeConfig, Handler, Layer, LayerConfig } from "./types/routeTypes.js";
+import { ComposeConfig, Handler, Layer, LayerConfig, RouteConfig } from "./types/routeTypes.js";
 import { walk } from './utils/fileWalker.js';
 import { fileParser } from './utils/fileParser.js';
 import { pathToFileURL } from 'url';
@@ -209,14 +209,14 @@ export class Rensa {
       // Apply Routes
       const routeFiles = await walk(routes);
       for (const { method, route, file } of fileParser(routeFiles, routes)) {
-        const routeImports = (await import(pathToFileURL(file).href));
+        const routeImports = (await import(pathToFileURL(file).href)).default;
         
-        const handler: Handler = routeImports.handler || routeImports.default;
+        const handler: Handler = routeImports?.handler;
         if (typeof handler !== "function") {
-          throw new Error(`Invalid handler in file ${file}. Expected a function export 'handler' or 'default'.`);
+          throw new Error(`Invalid handler in file ${file}. Expected a method handler and config within 'route()' as default export.\nMake sure the file exports this: export default route((req, res) => { // method handler }, { // any route config });`);
         }
 
-        const routeConfig = routeImports.config;
+        const routeConfig: RouteConfig = routeImports?.config;
         const routeLayers: Layer[] = routeConfig?.layers || [];
 
 

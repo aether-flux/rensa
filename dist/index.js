@@ -186,12 +186,12 @@ export class Rensa {
             // Apply Routes
             const routeFiles = await walk(routes);
             for (const { method, route, file } of fileParser(routeFiles, routes)) {
-                const routeImports = (await import(pathToFileURL(file).href));
-                const handler = routeImports.handler || routeImports.default;
+                const routeImports = (await import(pathToFileURL(file).href)).default;
+                const handler = routeImports?.handler;
                 if (typeof handler !== "function") {
-                    throw new Error(`Invalid handler in file ${file}. Expected a function export 'handler' or 'default'.`);
+                    throw new Error(`Invalid handler in file ${file}. Expected a method handler and config within 'route()' as default export.\nMake sure the file exports this: export default route((req, res) => { // method handler }, { // any route config });`);
                 }
-                const routeConfig = routeImports.config;
+                const routeConfig = routeImports?.config;
                 const routeLayers = routeConfig?.layers || [];
                 // Handling 404 routes (notFound.js / notFound.ts)
                 if (route === null && method === "notFound") {

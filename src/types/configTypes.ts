@@ -4,7 +4,7 @@ import { Layer, LayerConfig } from "./routeTypes";
 export type ConfigLayer = [Layer, LayerConfig];
 
 export type RensaConfig = {
-  mode?: "manual" | "files";
+  mode?: "manual" | "compose";
   app?: Rensa;
   port: number;
   staticDir?: string;

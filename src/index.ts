@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { loadEnv } from "./middlewares/envars.js";
 import { Server } from "./server/Server.js";
-import { ComposeConfig, Handler, Layer, LayerConfig, RouteConfig } from "./types/routeTypes.js";
+import { ComposeConfig, ComposeRouteConfig, Handler, Layer, LayerConfig, RouteConfig } from "./types/routeTypes.js";
 import { walk } from './utils/fileWalker.js';
 import { fileParser } from './utils/fileParser.js';
 import { pathToFileURL } from 'url';
@@ -112,41 +112,41 @@ export class Rensa {
     }
   }
 
-  get (path: string, ...handlers: Function[]) {
+  get (config: RouteConfig, handler: Handler) {
     try {
-      this.app.get(path, ...handlers);
+      this.app.get(config.path, ...config.layers || [], handler);
     } catch (e) {
       errorHandler(e);
     }
   }
 
-  post (path: string, ...handlers: Function[]) {
+  post (config: RouteConfig, handler: Handler) {
     try {
-      this.app.post(path, ...handlers);
+      this.app.post(config.path, ...config.layers || [], handler);
     } catch (e) {
       errorHandler(e);
     }
   }
 
-  put (path: string, ...handlers: Function[]) {
+  put (config: RouteConfig, handler: Handler) {
     try {
-      this.app.put(path, ...handlers);
+      this.app.put(config.path, ...config.layers || [], handler);
     } catch (e) {
       errorHandler(e);
     }
   }
 
-  patch (path: string, ...handlers: Function[]) {
+  patch (config: RouteConfig, handler: Handler) {
     try {
-      this.app.patch(path, ...handlers);
+      this.app.patch(config.path, ...config.layers || [], handler);
     } catch (e) {
       errorHandler(e);
     }
   }
 
-  delete (path: string, ...handlers: Function[]) {
+  delete (config: RouteConfig, handler: Handler) {
     try {
-      this.app.delete(path, ...handlers);
+      this.app.delete(config.path, ...config.layers || [], handler);
     } catch (e) {
       errorHandler(e);
     }
@@ -180,14 +180,14 @@ export class Rensa {
       if (config?.layers) {
         const layerFiles = await walk(config.layers);
         for (const file of layerFiles) {
-          const layerImports = (await import(pathToFileURL(file).href));
+          const layerImports = (await import(pathToFileURL(file).href)).default;
 
-          const layer = layerImports.layer || layerImports.default;
+          const layer = layerImports.layerFn;
           const layerConfig: LayerConfig = layerImports.config;
           if (layerConfig) {
-            this.use(layer(), layerConfig);
+            this.use(layer, layerConfig);
           } else {
-            this.use(layer());
+            this.use(layer);
           }
         }
       }
@@ -216,19 +216,24 @@ export class Rensa {
           throw new Error(`Invalid handler in file ${file}. Expected a method handler and config within 'route()' as default export.\nMake sure the file exports this: export default route((req, res) => { // method handler }, { // any route config });`);
         }
 
-        const routeConfig: RouteConfig = routeImports?.config;
+        const routeConfig: ComposeRouteConfig = routeImports?.config;
         const routeLayers: Layer[] = routeConfig?.layers || [];
 
 
         // Handling 404 routes (notFound.js / notFound.ts)
-        if (route === null && method === "notFound") {
-          
-          this.notFound(handler);
-
+        if (!route || typeof route !== "string") {
+          if (method === "notFound") {
+            this.notFound(handler);
+          } else {
+            throw new Error(`Route is undefined or invalid in file: ${file}`);
+          }
         } else {
 
         const normalizedRoute = (route as string).endsWith("/") && route !== "/" ? (route as string).slice(0, -1) : route;  // Convert /home/ to /home
-        (this as any)[method](normalizedRoute, ...routeLayers, handler);
+        (this as any)[method]({
+            path: normalizedRoute,
+            layers: routeLayers,
+          }, handler);
 
         }
 

@@ -94,41 +94,41 @@ export class Rensa {
             errorHandler(e);
         }
     }
-    get(path, ...handlers) {
+    get(config, handler) {
         try {
-            this.app.get(path, ...handlers);
+            this.app.get(config.path, ...config.layers || [], handler);
         }
         catch (e) {
             errorHandler(e);
         }
     }
-    post(path, ...handlers) {
+    post(config, handler) {
         try {
-            this.app.post(path, ...handlers);
+            this.app.post(config.path, ...config.layers || [], handler);
         }
         catch (e) {
             errorHandler(e);
         }
     }
-    put(path, ...handlers) {
+    put(config, handler) {
         try {
-            this.app.put(path, ...handlers);
+            this.app.put(config.path, ...config.layers || [], handler);
         }
         catch (e) {
             errorHandler(e);
         }
     }
-    patch(path, ...handlers) {
+    patch(config, handler) {
         try {
-            this.app.patch(path, ...handlers);
+            this.app.patch(config.path, ...config.layers || [], handler);
         }
         catch (e) {
             errorHandler(e);
         }
     }
-    delete(path, ...handlers) {
+    delete(config, handler) {
         try {
-            this.app.delete(path, ...handlers);
+            this.app.delete(config.path, ...config.layers || [], handler);
         }
         catch (e) {
             errorHandler(e);
@@ -161,14 +161,14 @@ export class Rensa {
             if (config?.layers) {
                 const layerFiles = await walk(config.layers);
                 for (const file of layerFiles) {
-                    const layerImports = (await import(pathToFileURL(file).href));
-                    const layer = layerImports.layer || layerImports.default;
+                    const layerImports = (await import(pathToFileURL(file).href)).default;
+                    const layer = layerImports.layerFn;
                     const layerConfig = layerImports.config;
                     if (layerConfig) {
-                        this.use(layer(), layerConfig);
+                        this.use(layer, layerConfig);
                     }
                     else {
-                        this.use(layer());
+                        this.use(layer);
                     }
                 }
             }
@@ -194,12 +194,20 @@ export class Rensa {
                 const routeConfig = routeImports?.config;
                 const routeLayers = routeConfig?.layers || [];
                 // Handling 404 routes (notFound.js / notFound.ts)
-                if (route === null && method === "notFound") {
-                    this.notFound(handler);
+                if (!route || typeof route !== "string") {
+                    if (method === "notFound") {
+                        this.notFound(handler);
+                    }
+                    else {
+                        throw new Error(`Route is undefined or invalid in file: ${file}`);
+                    }
                 }
                 else {
                     const normalizedRoute = route.endsWith("/") && route !== "/" ? route.slice(0, -1) : route; // Convert /home/ to /home
-                    this[method](normalizedRoute, ...routeLayers, handler);
+                    this[method]({
+                        path: normalizedRoute,
+                        layers: routeLayers,
+                    }, handler);
                 }
             }
         }

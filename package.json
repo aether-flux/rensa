@@ -9,11 +9,19 @@
   "exports": {
     ".": {
       "require": "./dist/index.js",
+      "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
     "./compose": {
-      "require": "./dist/exports/compose/index.js",
-      "default": "./dist/exports/compose/index.js"
+      "import": "./dist/exports/compose/index.js",
+      "default": "./dist/exports/compose/index.js",
+      "types": "./dist/exports/compose/index.d.ts"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "compose": ["dist/exports/compose/index.d.ts"]
     }
   },
   "files": [

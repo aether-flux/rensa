@@ -15,3 +15,8 @@ export interface Response extends ServerResponse {
     sendFile: (path: string) => void;
     render: (view: string, data?: Record<string, any>) => void;
 }
+type ExtractParams<Path extends string> = Path extends `${string}:${infer Param}/${infer Rest}` ? Param | ExtractParams<`/${Rest}`> : Path extends `${string}:${infer Param}` ? Param : never;
+export type ParamsObject<Path extends string> = {
+    [K in ExtractParams<Path>]: string;
+};
+export {};

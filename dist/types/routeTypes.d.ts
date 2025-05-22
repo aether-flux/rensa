@@ -22,7 +22,11 @@ export type RouteMap = {
     [key: string]: RouteNode;
 };
 export type RouteConfig = {
-    layers: Layer[];
+    path: string;
+    layers?: Layer[];
+};
+export type ComposeRouteConfig = {
+    layers?: Layer[];
 };
 export type ComposeConfig = {
     routes?: string;

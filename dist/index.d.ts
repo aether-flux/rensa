@@ -1,5 +1,5 @@
 import { Server } from "./server/Server.js";
-import { ComposeConfig, Handler, Layer, LayerConfig } from "./types/routeTypes.js";
+import { ComposeConfig, Handler, Layer, LayerConfig, RouteConfig } from "./types/routeTypes.js";
 export type { Request, Response } from "./types/httpTypes.js";
 export type { Handler, Layer };
 export declare class Rensa {
@@ -13,11 +13,11 @@ export declare class Rensa {
     usePreset(presetName: string, config?: LayerConfig): void;
     viewEngine(engine: string, folder?: string): void;
     static(folder?: string): void;
-    get(path: string, ...handlers: Function[]): void;
-    post(path: string, ...handlers: Function[]): void;
-    put(path: string, ...handlers: Function[]): void;
-    patch(path: string, ...handlers: Function[]): void;
-    delete(path: string, ...handlers: Function[]): void;
+    get(config: RouteConfig, handler: Handler): void;
+    post(config: RouteConfig, handler: Handler): void;
+    put(config: RouteConfig, handler: Handler): void;
+    patch(config: RouteConfig, handler: Handler): void;
+    delete(config: RouteConfig, handler: Handler): void;
     notFound(handler: Handler): void;
     listen(port: number, callback: () => void): void;
     compose(config?: ComposeConfig): Promise<void>;

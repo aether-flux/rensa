@@ -28,9 +28,15 @@ export type RouteNode = {
 // Route hashmap type
 export type RouteMap = { [key: string]: RouteNode };
 
-// Route Config for Exports (in File-Based Routing mode)
+// Route Config (in Manual mode)
 export type RouteConfig = {
-  layers: Layer[];
+  path: string;
+  layers?: Layer[];
+};
+
+// Route Config (in Compose mode)
+export type ComposeRouteConfig = {
+  layers?: Layer[];
 };
 
 // Config for File-Based Routing (compose)

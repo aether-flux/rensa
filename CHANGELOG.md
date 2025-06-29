@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ## [3.0.0] - 2025-06-31 ////////////////////////// CHANGE DATE /////////////////////////////////////////
 
 ### Added
+- **Rust-powered internals** for route storage.
 - A config file **rensa.config.js** for managing your Rensa server.
 - Support for **two working modes**:
     - **Manual mode**: write routes and logic manually (like Express)

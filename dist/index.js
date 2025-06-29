@@ -187,7 +187,6 @@ export class Rensa {
             const parsedRoutes = fileParser(routeFiles, routes);
             parsedRoutes.sort((a, b) => (a.route) ? a.route.length - b.route.length : 0);
             for (const { method, route, file } of parsedRoutes) {
-                console.log("Registering route: ", route);
                 const routeImports = (await import(pathToFileURL(file).href)).default;
                 const handler = routeImports?.handler;
                 if (typeof handler !== "function") {

@@ -47,52 +47,120 @@ impl RouteStore {
         node.eor = true;
     }
 
+    fn search_recursive<'a>(
+        node: &'a Node,
+        parts: &[&str],
+        idx: usize,
+        params: &mut HashMap<String, String>,
+        matched_path: &mut Vec<String>,
+    ) -> Option<RouteMatch> {
+        if idx == parts.len() {
+            if node.eor {
+                return Some(RouteMatch {
+                    pattern: format!("/{}", matched_path.join("/")),
+                    params: params.clone(),
+                });
+            } else {
+                return None;
+            }
+        }
+
+        let part = parts[idx];
+
+        // Static match
+        if let Some(child) = node.children.get(part) {
+            matched_path.push(part.to_string());
+            if let Some(result) = Self::search_recursive(child, parts, idx + 1, params, matched_path) {
+                return Some(result);
+            }
+            matched_path.pop();
+        }
+
+        // Dynamic match
+        for (key, child) in node.children.iter().filter(|(k, _)| k.starts_with(":")) {
+            let param_name = &key[1..];
+            matched_path.push(key.clone());
+            params.insert(param_name.to_string(), part.to_string());
+
+            if let Some(result) = Self::search_recursive(child, parts, idx + 1, params, matched_path) {
+                return Some(result);
+            }
+
+            matched_path.pop();
+            params.remove(param_name);
+        }
+
+        // Wildcard match
+        if let Some(child) = node.children.get("*") {
+            matched_path.push("*".to_string());
+            return Some(RouteMatch {
+                pattern: format!("/{}", matched_path.join("/")),
+                params: params.clone(),
+            });
+        }
+
+        None
+    }
+
     #[napi]
-    pub fn search (&self, path: String) -> Option<RouteMatch> {
-        let parts = path
+    pub fn search(&self, path: String) -> Option<RouteMatch> {
+        let parts: Vec<&str> = path
             .split('/')
             .filter(|s| !s.is_empty())
-            .collect::<Vec<_>>();
+            .collect();
 
         let mut params = HashMap::new();
-        let mut node = &self.root;
         let mut matched_path = Vec::new();
 
-        for part in parts {
-            // Try static match
-            if let Some(child) = node.children.get(part) {
-                matched_path.push(part.to_string());
-                node = child;
-                continue;
-            }
-
-            // Try dynamic match
-            if let Some((key, child)) = node.children.iter().find(|(k, _)| k.starts_with(":")) {
-                matched_path.push(key.clone());
-                params.insert(key[1..].to_string(), part.to_string());
-                node = child;
-                continue;
-            }
-
-            // Try wildcard match
-            if let Some(child) = node.children.get("*") {
-                matched_path.push("*".to_string());
-                node = child;
-                break;
-            }
-
-            return None;
-        }
-
-        if node.eor {
-            Some(RouteMatch {
-                pattern: format!("/{}", matched_path.join("/")),
-                params,
-            })
-        } else {
-            None
-        }
+        Self::search_recursive(&self.root, &parts, 0, &mut params, &mut matched_path)
     }
+
+    // #[napi]
+    // pub fn search (&self, path: String) -> Option<RouteMatch> {
+    //     let parts = path
+    //         .split('/')
+    //         .filter(|s| !s.is_empty())
+    //         .collect::<Vec<_>>();
+    //
+    //     let mut params = HashMap::new();
+    //     let mut node = &self.root;
+    //     let mut matched_path = Vec::new();
+    //
+    //     for part in parts {
+    //         // Try static match
+    //         if let Some(child) = node.children.get(part) {
+    //             matched_path.push(part.to_string());
+    //             node = child;
+    //             continue;
+    //         }
+    //
+    //         // Try dynamic match
+    //         if let Some((key, child)) = node.children.iter().find(|(k, _)| k.starts_with(":")) {
+    //             matched_path.push(key.clone());
+    //             params.insert(key[1..].to_string(), part.to_string());
+    //             node = child;
+    //             continue;
+    //         }
+    //
+    //         // Try wildcard match
+    //         if let Some(child) = node.children.get("*") {
+    //             matched_path.push("*".to_string());
+    //             node = child;
+    //             break;
+    //         }
+    //
+    //         return None;
+    //     }
+    //
+    //     if node.eor {
+    //         Some(RouteMatch {
+    //             pattern: format!("/{}", matched_path.join("/")),
+    //             params,
+    //         })
+    //     } else {
+    //         None
+    //     }
+    // }
 }
 
 #[napi(object)]

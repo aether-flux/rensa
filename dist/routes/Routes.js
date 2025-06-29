@@ -61,10 +61,6 @@ export class Router {
     }
     async handleRoute(method, path, req, res) {
         req.params = {};
-        // await new Promise(r => setTimeout(r, 10));
-        // console.log("Incoming path:", path);
-        // console.log("Available keys in routes:", Object.keys(this.routes[method]));
-        console.log("");
         if (!this.routes[method]) {
             res.statusCode = 405;
             res.end(`Method ${method} Not Allowed.`);
@@ -73,7 +69,6 @@ export class Router {
         let routeData = this.routes[method][path];
         if (!routeData) {
             const result = this.store.search(path);
-            console.log("");
             if (result) {
                 const { params, pattern: url } = result;
                 req.params = params;

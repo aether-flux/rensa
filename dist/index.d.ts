@@ -22,4 +22,3 @@ export declare class Rensa {
     listen(port: number, callback: () => void): void;
     compose(config?: ComposeConfig): Promise<void>;
 }
-export declare function env(): void;

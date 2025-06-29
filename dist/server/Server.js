@@ -11,7 +11,6 @@ import { logger } from "../middlewares/logger.js";
 import { securityHeaders } from "../middlewares/security.js";
 import { cookieParser } from "../middlewares/cookies.js";
 import { session } from "../middlewares/session.js";
-import { envars } from "../middlewares/envars.js";
 export class Server {
     constructor() {
         this.router = new Router();
@@ -33,7 +32,6 @@ export class Server {
             "security": securityHeaders,
             "cookies": cookieParser,
             "sessions": session,
-            "env": envars
         };
         if (!(midd in builtins))
             return;
@@ -69,20 +67,20 @@ export class Server {
         this.renderEngine = engine;
         this.renderFolder = gpath.resolve(folder);
     }
-    get(path, ...handlers) {
-        this.router.add("GET", path, ...handlers);
+    async get(path, ...handlers) {
+        await this.router.add("GET", path, ...handlers);
     }
-    post(path, ...handlers) {
-        this.router.add("POST", path, ...handlers);
+    async post(path, ...handlers) {
+        await this.router.add("POST", path, ...handlers);
     }
-    put(path, ...handlers) {
-        this.router.add("PUT", path, ...handlers);
+    async put(path, ...handlers) {
+        await this.router.add("PUT", path, ...handlers);
     }
-    patch(path, ...handlers) {
-        this.router.add("PATCH", path, ...handlers);
+    async patch(path, ...handlers) {
+        await this.router.add("PATCH", path, ...handlers);
     }
-    delete(path, ...handlers) {
-        this.router.add("DELETE", path, ...handlers);
+    async delete(path, ...handlers) {
+        await this.router.add("DELETE", path, ...handlers);
     }
     notFound(handler) {
         if (!this.server)

@@ -3,7 +3,7 @@ import fs from "fs";
 import chalk from "chalk";
 import { errorHandler } from "../../utils/errorHandler.js";
 const configContent = `export default {
-  // Mode of using Rensa. "files" means automatic file-based routing. Switch to "manual" for complete control.
+  // Mode of using Rensa. "compose" means automatic file-based routing. Switch to "manual" for complete control.
   mode: "compose",
   // OR
   // mode: "manual",
@@ -12,16 +12,16 @@ const configContent = `export default {
   // Export the app instance from your main file (export const app = new Rensa()).
   // app: app,
 
-  // Directory where routes will be defined (for "files" mode). If nothing is provided, default is "routes/".
+  // Directory where routes will be defined (for "compose" mode). If nothing is provided, default is "routes/".
   // routesDir: "routes",
 
-  // Directory where layers will be defined (for "files" mode). If nothing is provided, Layers won't get applied by default.
+  // Directory where layers will be defined (for "compose" mode). If nothing is provided, Layers won't get applied by default.
   // layersDir: "layers/global",
 
-  // Apply any layers manually (works in "files" mode only)
+  // Apply any layers manually (works in "compose" mode only)
   // layers: [[layerFn1, { scope: ["/"] }], [layerFn2, { scope: ["/home"] }]],
 
-  // Builtin Layers (if any) (works in "files" mode only)
+  // Builtin Layers (if any) (works in "compose" mode only)
   // builtins: [["logger"], ["rate limiter", 60000, 20]],
 
   // Set view engine and views directory

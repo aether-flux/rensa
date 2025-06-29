@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import { loadEnv } from "./middlewares/envars.js";
 import { Server } from "./server/Server.js";
 import { walk } from './utils/fileWalker.js';
 import { fileParser } from './utils/fileParser.js';
@@ -185,7 +184,10 @@ export class Rensa {
             }
             // Apply Routes
             const routeFiles = await walk(routes);
-            for (const { method, route, file } of fileParser(routeFiles, routes)) {
+            const parsedRoutes = fileParser(routeFiles, routes);
+            parsedRoutes.sort((a, b) => (a.route) ? a.route.length - b.route.length : 0);
+            for (const { method, route, file } of parsedRoutes) {
+                console.log("Registering route: ", route);
                 const routeImports = (await import(pathToFileURL(file).href)).default;
                 const handler = routeImports?.handler;
                 if (typeof handler !== "function") {
@@ -215,7 +217,4 @@ export class Rensa {
             errorHandler(e);
         }
     }
-}
-export function env() {
-    loadEnv();
 }

@@ -39,6 +39,20 @@ export type ComposeRouteConfig = {
   layers?: Layer[];
 };
 
+// Compose Types
+
+// Compose Route
+export type ComposeRoute = {
+  handler: Handler;
+  config?: ComposeRouteConfig;
+};
+
+// Compose Layer
+export type ComposeLayer = {
+  layerFn: Layer;
+  config?: LayerConfig;
+};
+
 // Config for File-Based Routing (compose)
 export type ComposeConfig = {
   routes?: string;

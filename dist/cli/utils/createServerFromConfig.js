@@ -1,4 +1,4 @@
-export const createServerFromConfig = (app, config) => {
+export const createServerFromConfig = async (app, config) => {
     const { viewEngine, views, staticDir, routesDir, layersDir, layers, builtins } = config;
     layers?.forEach(l => {
         if (l[1]) {
@@ -8,7 +8,7 @@ export const createServerFromConfig = (app, config) => {
             app.use(l[0]);
         }
     });
-    app.compose({
+    await app.compose({
         routes: routesDir,
         layers: layersDir,
         builtins: builtins,

@@ -9,7 +9,7 @@ export const walk = async (dir: string): Promise<string[]> => {
 
     if (entry.isDirectory()) {
       files = files.concat(await walk(fullPath));
-    } else {
+    } else if (fullPath.endsWith(".js")) {
       files.push(fullPath);
     }
   }

@@ -11,7 +11,6 @@ import { logger } from "../middlewares/logger.js";
 import { securityHeaders } from "../middlewares/security.js";
 import { cookieParser } from "../middlewares/cookies.js";
 import { session } from "../middlewares/session.js";
-import { envars } from "../middlewares/envars.js";
 import { Handler, Layer, LayerConfig } from "../types/routeTypes.js";
 import { Request, Response } from "../types/httpTypes.js";
 
@@ -43,7 +42,6 @@ export class Server {
       "security": securityHeaders,
       "cookies": cookieParser,
       "sessions": session,
-      "env": envars
     };
 
     if (!(midd in builtins)) return;
@@ -89,24 +87,24 @@ export class Server {
     this.renderFolder = gpath.resolve(folder);
   }
 
-  get (path: string, ...handlers: Function[]) {
-    this.router.add("GET", path, ...handlers);
+  async get (path: string, ...handlers: Function[]) {
+    await this.router.add("GET", path, ...handlers);
   }
 
-  post (path: string, ...handlers: Function[]) {
-    this.router.add("POST", path, ...handlers);
+  async post (path: string, ...handlers: Function[]) {
+    await this.router.add("POST", path, ...handlers);
   }
 
-  put (path: string, ...handlers: Function[]) {
-    this.router.add("PUT", path, ...handlers);
+  async put (path: string, ...handlers: Function[]) {
+    await this.router.add("PUT", path, ...handlers);
   }
 
-  patch (path: string, ...handlers: Function[]) {
-    this.router.add("PATCH", path, ...handlers);
+  async patch (path: string, ...handlers: Function[]) {
+    await this.router.add("PATCH", path, ...handlers);
   }
 
-  delete (path: string, ...handlers: Function[]) {
-    this.router.add("DELETE", path, ...handlers);
+  async delete (path: string, ...handlers: Function[]) {
+    await this.router.add("DELETE", path, ...handlers);
   }
 
   notFound (handler: Handler) {

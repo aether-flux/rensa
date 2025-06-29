@@ -1,7 +1,7 @@
 import { Rensa } from "../../index.js"
 import { RensaConfig } from "../../types/configTypes.js"
 
-export const createServerFromConfig = (app: Rensa, config: RensaConfig) => {
+export const createServerFromConfig = async (app: Rensa, config: RensaConfig) => {
   const { viewEngine, views, staticDir, routesDir, layersDir, layers, builtins } = config;
 
   layers?.forEach(l => {
@@ -12,7 +12,7 @@ export const createServerFromConfig = (app: Rensa, config: RensaConfig) => {
     }
   });
 
-  app.compose({
+  await app.compose({
     routes: routesDir,
     layers: layersDir,
     builtins: builtins,

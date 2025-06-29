@@ -1,23 +1,18 @@
 import fs from 'fs';
 import path from 'path';
-export function loadEnv() {
+import { errorHandler } from '../utils/errorHandler.js';
+export function loadEnv(file) {
     try {
-        const envdata = fs.readFileSync(path.join(process.cwd(), ".env"), { encoding: 'utf8' });
+        const envFilePath = file ? path.join(process.cwd(), file) : path.join(process.cwd(), ".env");
+        const envdata = fs.readFileSync(envFilePath, { encoding: 'utf8' });
         const envfields = envdata.split(/\r?\n/);
         envfields.forEach((f) => {
             const [key, val] = f.split("=");
             if (key && val)
                 process.env[key.trim()] = val.trim();
         });
-        console.log("✅ Env loaded!");
     }
     catch (e) {
-        console.error("❌ Failed to load .env:", e);
+        errorHandler(e);
     }
-}
-export function envars() {
-    return (req, res, next) => {
-        loadEnv();
-        next();
-    };
 }

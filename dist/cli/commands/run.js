@@ -21,7 +21,7 @@ export const run = async (root) => {
         }
         else if (config.mode === "compose") {
             app = new Rensa();
-            createServerFromConfig(app, config);
+            await createServerFromConfig(app, config);
             app.listen(config.port, () => {
                 console.log(`\n${chalk.yellow("[rensa]")} Server started at port ${config.port}...\n`);
             });

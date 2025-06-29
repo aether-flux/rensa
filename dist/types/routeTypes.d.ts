@@ -28,6 +28,14 @@ export type RouteConfig = {
 export type ComposeRouteConfig = {
     layers?: Layer[];
 };
+export type ComposeRoute = {
+    handler: Handler;
+    config?: ComposeRouteConfig;
+};
+export type ComposeLayer = {
+    layerFn: Layer;
+    config?: LayerConfig;
+};
 export type ComposeConfig = {
     routes?: string;
     layers?: string;

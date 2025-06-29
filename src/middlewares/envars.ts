@@ -1,25 +1,20 @@
 import fs from 'fs';
 import path from 'path';
 import { Request, Response } from '../types/httpTypes';
+import { errorHandler } from '../utils/errorHandler.js';
 
-export function loadEnv() {
+export function loadEnv(file?: string) {
   try {
-    const envdata = fs.readFileSync(path.join(process.cwd(), ".env"), { encoding: 'utf8' });
+    const envFilePath = file ? path.join(process.cwd(), file) : path.join(process.cwd(), ".env");
+    const envdata = fs.readFileSync(envFilePath, { encoding: 'utf8' });
     const envfields = envdata.split(/\r?\n/);
 
     envfields.forEach((f) => {
       const [key, val] = f.split("=");
       if (key && val) process.env[key.trim()] = val.trim();
     });
-    console.log("✅ Env loaded!");
   } catch (e) {
-    console.error("❌ Failed to load .env:", e);
+    errorHandler(e);
   }
 }
 
-export function envars () {
-  return (req: Request, res: Response, next: () => void) => {
-    loadEnv();
-    next();
-  }
-}

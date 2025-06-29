@@ -8,18 +8,21 @@ const createRouteContent = (route: string, ts: boolean = false) => {
   let content;
 
   if (ts) {
-    content = `import { Handler } from "rensa";
+    content = `import { route } from "rensa/compose";
+import { Request, Response, ComposeRoute } from "rensa/types";
 
-export const handler: Handler = (req, res) => {
+export default route((req: Request, res: Response) => {
   console.log("${`Route: ${route}`}");
   res.send({ message: "${`Route ${route}`}" });
-};
+}) as ComposeRoute;
 `
   } else {
-    content = `export const handler = (req, res) => {
+    content = `import { route } from "rensa/compose";
+
+export default route((req, res) => {
   console.log("${`Route: ${route}`}");
   res.send({ message: "${`Route ${route}`}" });
-}
+});
 `
   }
 

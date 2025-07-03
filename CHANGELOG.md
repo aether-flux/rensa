@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 ## 🎉 Major Release
-## [3.0.0] - 2025-06-31 ////////////////////////// CHANGE DATE /////////////////////////////////////////
+## [3.0.0] - 2025-07-04
 
 ### Added
 - **Rust-powered internals** for route storage.

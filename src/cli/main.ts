@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Command } from "commander";
 import { routeAction } from "./commands/route.js";
 import { routes } from "./commands/routes.js";

@@ -1,6 +1,6 @@
 {
   "name": "rensa",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Rensa is a modern and smooth-to-use backend framework with file-based routing, Layers (middlewares), and a DX-first API for scalable apps.",
   "main": "dist/index.js",
   "bin": {

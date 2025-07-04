@@ -38,6 +38,24 @@ Select your desired template when prompted:
 Know more about the templates in [this repository](https://github.com/aether-flux/rensa-templates).
 Learn more about getting started in the [docs](https://rensa.vercel.app/docs/quick-start-guide).
 
+### Rensa CLI
+Rensa comes with a feature-packed CLI that can help you build with Rensa.
+
+Some of the commands are:
+##### dev
+You can start your server with hot reload on file changes with just one command. Use this command as follows:
+```sh
+npx rensa dev
+```
+
+##### route [in Compose mode only]
+You can create a new route with a single command. Specify the route path and method as follows, and Rensa CLI will create a new route for you:
+```sh
+npx rensa route [method] [path]
+```
+
+There are many more commands in the Rensa CLI. To know more about the Rensa CLI, visit the docs for [available commands](https://rensa.vercel.app/docs/available-commands).
+
 ## Documentation
 A complete documentation is available on the official [Rensa](https://rensa.vercel.app/) website.
 

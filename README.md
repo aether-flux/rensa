@@ -43,7 +43,7 @@ A complete documentation is available on the official [Rensa](https://rensa.verc
 
 ## Latest Release
 🎉 Rensa **v3.0.0** is out now!
-[Check out the full release notes here!](https://github.com/aether-flux/rensa/releases/tag/v3.0.0)
+[Check out the latest release notes here!](https://github.com/aether-flux/rensa/releases/latest)
 
 ## Support
 Love using Rensa? If you'd like to support its development and help keep it going, consider [buying me a coffee](https://buymeacoffee.com/aetherflux)!
